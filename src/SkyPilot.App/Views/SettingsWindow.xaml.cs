@@ -31,6 +31,7 @@ public partial class SettingsWindow : Window
         var server = settings.CurrentServer;
         ServerBox.Text = $"{server.Host}:{server.Port}";
         WebsiteBox.Text = settings.Website;
+        SimbriefBox.Text = settings.SimbriefUser;
         SimulatorBox.ItemsSource = SkyPilot.Core.Simulation.SimulatorKind.All.Select(k => new { k.Id, k.Title }).ToList();
         SimulatorBox.SelectedValue = settings.Simulator;
         if (SimulatorBox.SelectedIndex < 0) SimulatorBox.SelectedIndex = 0;
@@ -43,6 +44,7 @@ public partial class SettingsWindow : Window
         FillDevices(OutputBox, outputs, settings.OutputDevice);
         MicGainSlider.Value = Math.Round(settings.MicGain * 100);
         VolumeSlider.Value = Math.Round(settings.OutputVolume * 100);
+        RadioNoiseBox.IsChecked = settings.RadioNoise;
         OnSliderChanged(this, new RoutedPropertyChangedEventArgs<double>(0, 0));
         _ptt = PttBinding.Parse(settings.PttKey);
         PttBox.Text = Describe(_ptt);
@@ -161,6 +163,7 @@ public partial class SettingsWindow : Window
         }
         _settings.Cid = cid;
         _settings.Website = website;
+        _settings.SimbriefUser = SimbriefBox.Text.Trim();
         _settings.ProtectedPassword = _protector.Protect(PasswordBox.Password);
         _settings.RealName = NameBox.Text.Trim();
         var server = _settings.CurrentServer;
@@ -176,6 +179,7 @@ public partial class SettingsWindow : Window
         _settings.OutputDevice = SelectedDevice(OutputBox);
         _settings.MicGain = MicGainSlider.Value / 100;
         _settings.OutputVolume = VolumeSlider.Value / 100;
+        _settings.RadioNoise = RadioNoiseBox.IsChecked == true;
         _settings.PttKey = _ptt.ToString();
         _settings.VoicePort = voicePort;
         DialogResult = true;

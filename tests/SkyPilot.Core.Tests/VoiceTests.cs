@@ -67,6 +67,7 @@ public class VoiceTests
         var s = new AppSettings
         {
             InputDevice = "USB Headset", OutputDevice = "Gone", MicGain = 1.5, OutputVolume = 9, PttKey = "joy:1:4",
+            RadioNoise = false,
         };
         var v = PilotRadios.ToVoiceSettings(s, ["Realtek Mic", "USB Headset"], ["Speakers"]);
         Assert.Equal(1, v.InputDevice);
@@ -74,11 +75,13 @@ public class VoiceTests
         Assert.Equal(1.5f, v.MicGain);
         Assert.Equal(2f, v.OutputVolume);
         Assert.Equal(new PttBinding(PttKind.Joystick, 4, 1), v.Ptt);
+        Assert.False(v.RadioNoise);
 
         var defaults = PilotRadios.ToVoiceSettings(new AppSettings(), [], []);
         Assert.Equal(-1, defaults.InputDevice);
         Assert.Equal(-1, defaults.OutputDevice);
         Assert.Equal(PttBinding.None, defaults.Ptt);
+        Assert.True(defaults.RadioNoise);
     }
 
     [Fact]

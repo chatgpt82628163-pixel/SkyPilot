@@ -31,6 +31,8 @@ public sealed class AppSettings
     public string HomeAirport { get; set; } = "";
     /// <summary>SkyNetwork website, where flight plans are filed.</summary>
     public string Website { get; set; } = "http://127.0.0.1:8000/";
+    /// <summary>SimBrief username or numeric Pilot ID: SIMBRIEF loads the latest plan made there.</summary>
+    public string SimbriefUser { get; set; } = "";
     public List<ServerEntry> Servers { get; set; } = [new ServerEntry()];
     public string SelectedServer { get; set; } = "SKYNET";
     public string LastCallsign { get; set; } = "";
@@ -48,6 +50,8 @@ public sealed class AppSettings
     public double OutputVolume { get; set; } = 1;
     /// <summary>Push-to-talk key or joystick button, e.g. "key:162" or "joy:0:4"; empty = none.</summary>
     public string PttKey { get; set; } = "";
+    /// <summary>Faint receiver hiss and squelch tail on what is heard; off gives a clean voice.</summary>
+    public bool RadioNoise { get; set; } = true;
 
     /// <summary>Which simulator to use: "auto", "msfs", "p3d" or "xplane" (see SimulatorKind).</summary>
     public string Simulator { get; set; } = "auto";
