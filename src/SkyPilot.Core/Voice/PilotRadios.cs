@@ -45,6 +45,7 @@ public static class PilotRadios
         MicGain = (float)Math.Clamp(s.MicGain, 0, 4),
         OutputVolume = (float)Math.Clamp(s.OutputVolume, 0, 2),
         Ptt = PttBinding.Parse(s.PttKey),
+        RadioNoise = s.RadioNoise,
     };
 
     /// <summary>Index of a device by name; -1 (Windows default) if empty or no longer present.</summary>

@@ -44,6 +44,7 @@ public partial class SettingsWindow : Window
         FillDevices(OutputBox, outputs, settings.OutputDevice);
         MicGainSlider.Value = Math.Round(settings.MicGain * 100);
         VolumeSlider.Value = Math.Round(settings.OutputVolume * 100);
+        RadioNoiseBox.IsChecked = settings.RadioNoise;
         OnSliderChanged(this, new RoutedPropertyChangedEventArgs<double>(0, 0));
         _ptt = PttBinding.Parse(settings.PttKey);
         PttBox.Text = Describe(_ptt);
@@ -178,6 +179,7 @@ public partial class SettingsWindow : Window
         _settings.OutputDevice = SelectedDevice(OutputBox);
         _settings.MicGain = MicGainSlider.Value / 100;
         _settings.OutputVolume = VolumeSlider.Value / 100;
+        _settings.RadioNoise = RadioNoiseBox.IsChecked == true;
         _settings.PttKey = _ptt.ToString();
         _settings.VoicePort = voicePort;
         DialogResult = true;
