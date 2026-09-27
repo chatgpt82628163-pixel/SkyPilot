@@ -100,6 +100,7 @@ public partial class MainWindow : Window
         };
         _vm.UtcTime = DateTime.UtcNow.ToString("HH:mm");
         _clock.Start();
+        Loaded += (_, _) => CheckForUpdatesAtStart();
 
         _vm.RadioTab.Add(new ChatMessage(MessageKind.Info, "SkyPilot",
             "Welcome to SkyPilot! Start your simulator (MSFS, Prepar3D or X-Plane), then click OFFLINE to connect. Commands: .help", DateTime.UtcNow));

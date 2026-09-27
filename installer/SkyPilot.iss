@@ -1,6 +1,8 @@
 ; SkyPilot installer (Inno Setup 6).
 ; Built by .github/workflows/release.yml:
 ;   iscc /DAppVersion=1.0.0 /DSourceDir=..\publish\SkyPilot /DOutputDir=..\dist installer\SkyPilot.iss
+; The program updates itself by running a newer installer silently (see its UpdateChecker):
+;   SkyPilot-Setup-x.y.z.exe /SILENT /SP- /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS /LAUNCH=1
 
 #ifndef AppVersion
   #define AppVersion "0.1.0"
@@ -27,20 +29,25 @@ VersionInfoVersion={#AppVersion}
 DefaultDirName={autopf}\SkyNetwork\{#AppName}
 DefaultGroupName=SkyNetwork
 DisableProgramGroupPage=yes
-; Installs for all users (asks for administrator rights) or, if chosen, only for the current user.
-PrivilegesRequired=admin
-PrivilegesRequiredOverridesAllowed=dialog
+; Installs for the current user (no administrator rights, so updates install without questions) or, if chosen,
+; for all users. An update keeps the choice made at the first install (UsePreviousPrivileges).
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog commandline
+UsePreviousPrivileges=yes
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 OutputDir={#OutputDir}
 OutputBaseFilename={#AppName}-Setup-{#AppVersion}
 UninstallDisplayIcon={app}\{#AppExe}
+SetupIconFile=..\src\SkyPilot.App\Assets\SkyPilot.ico
 UninstallDisplayName={#AppName}
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
 CloseApplications=yes
+; The program is started by the [Run] entry below after an update, not a second time by the restart manager.
+RestartApplications=no
 
 [Languages]
 Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
@@ -59,5 +66,13 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopico
 
 [Run]
 Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
+; After a silent self-update (/LAUNCH=1) the program comes back by itself, as the user, not as administrator.
+Filename: "{app}\{#AppExe}"; Flags: nowait runasoriginaluser; Check: LaunchAfterSilentUpdate
 
 ; Settings in %APPDATA%\SkyPilot are kept on uninstall.
+
+[Code]
+function LaunchAfterSilentUpdate(): Boolean;
+begin
+  Result := WizardSilent and (ExpandConstant('{param:LAUNCH|0}') = '1');
+end;

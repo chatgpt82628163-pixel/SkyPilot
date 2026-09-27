@@ -37,6 +37,7 @@
       </DockPanel>
       <CheckBox x:Name="SoundBox" Content="Play sound on private message" Margin="0,14,0,0"/>
       <CheckBox x:Name="TopmostBox" Content="Always on top" Margin="0,8,0,0"/>
+      <CheckBox x:Name="UpdatesBox" Content="Check for updates at start and offer to install them" Margin="0,8,0,0"/>
     </StackPanel>
 
     <!-- Radio voice -->

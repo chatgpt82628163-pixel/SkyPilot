@@ -39,6 +39,10 @@ public sealed class AppSettings
     public string LastTypeCode { get; set; } = "";
     public bool PlaySoundOnPrivateMessage { get; set; } = true;
     public bool KeepWindowOnTop { get; set; }
+    /// <summary>At start, look for a newer release on GitHub and offer to install it.</summary>
+    public bool CheckForUpdates { get; set; } = true;
+    /// <summary>The release tag SkyPilot last installed by itself: that release is not offered again.</summary>
+    public string UpdateInstalledTag { get; set; } = "";
 
     /// <summary>UDP port of the voice server; it runs on the same host as the FSD server.</summary>
     public int VoicePort { get; set; } = 3782;

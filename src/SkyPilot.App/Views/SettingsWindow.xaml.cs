@@ -38,6 +38,7 @@ public partial class SettingsWindow : Window
         P3dDllBox.Text = settings.P3dSimConnectPath;
         SoundBox.IsChecked = settings.PlaySoundOnPrivateMessage;
         TopmostBox.IsChecked = settings.KeepWindowOnTop;
+        UpdatesBox.IsChecked = settings.CheckForUpdates;
 
         var (inputs, outputs) = VoiceClient.Devices();
         FillDevices(InputBox, inputs, settings.InputDevice);
@@ -175,6 +176,7 @@ public partial class SettingsWindow : Window
         _settings.P3dSimConnectPath = P3dDllBox.Text.Trim();
         _settings.PlaySoundOnPrivateMessage = SoundBox.IsChecked == true;
         _settings.KeepWindowOnTop = TopmostBox.IsChecked == true;
+        _settings.CheckForUpdates = UpdatesBox.IsChecked == true;
         _settings.InputDevice = SelectedDevice(InputBox);
         _settings.OutputDevice = SelectedDevice(OutputBox);
         _settings.MicGain = MicGainSlider.Value / 100;
