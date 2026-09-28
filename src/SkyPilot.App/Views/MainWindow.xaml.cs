@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using SkyPilot.App.Resources;
 using SkyPilot.App.Services;
 using SkyPilot.App.ViewModels;
 using SkyPilot.Core.Fsd;
@@ -40,6 +41,7 @@ public partial class MainWindow : Window
     private readonly PilotVoice? _voice;
     private readonly DispatcherTimer _simRetry = new() { Interval = TimeSpan.FromSeconds(3) };
     private readonly DispatcherTimer _clock = new() { Interval = TimeSpan.FromSeconds(1) };
+    private readonly DispatcherTimer _positionsTimer = new() { Interval = TimeSpan.FromSeconds(60) };
     private readonly List<string> _history = [];
     private int _historyIndex;
     private DateTime _nextPlanPoll;
@@ -51,6 +53,9 @@ public partial class MainWindow : Window
     private bool _websiteKnownAtSimbrief;
     private ConnectInfo? _connectInfo;
     private OwnAircraftData? _own;
+    private PositionsClient? _positionsClient;
+    private string? _nearestAirport;
+    private IReadOnlyList<SkyPilot.Core.Web.PositionEntry> _lastPositions = [];
 
     /// <summary>Preview-only constructor: sets the DataContext to a pre-built ViewModel without connecting to any service.</summary>
     internal MainWindow(MainViewModel previewVm)
@@ -116,13 +121,23 @@ public partial class MainWindow : Window
         };
         _vm.UtcTime = DateTime.UtcNow.ToString("HH:mm");
         _clock.Start();
-        Loaded += (_, _) => CheckForUpdatesAtStart();
+
+        // Positions panel: fetch every 60 s in the background.
+        _positionsTimer.Tick += async (_, _) => await RefreshPositionsAsync();
+        Loaded += async (_, _) =>
+        {
+            CheckForUpdatesAtStart();
+            InitPositionsClient();
+            await RefreshPositionsAsync();
+            _positionsTimer.Start();
+        };
 
         _vm.PttKey = _settings.PttKey.Length > 0 ? _settings.PttKey : "";
         _vm.RadioTab.Add(new ChatMessage(MessageKind.Info, "SkyPilot",
             "Welcome to SkyPilot! Start your simulator (MSFS, Prepar3D or X-Plane), then click CONNECT. Commands: .help", DateTime.UtcNow));
         Closing += (_, _) =>
         {
+            _positionsTimer.Stop();
             _settings.KeepWindowOnTop = _vm.Topmost;
             _settings.Save(_settingsPath);
             _voice?.Dispose();
@@ -442,7 +457,11 @@ public partial class MainWindow : Window
         Keyboard.ClearFocus();
     }
 
-    private void UpdateControllers() => _vm.SetControllers(_session.Controllers, _session.Atis);
+    private void UpdateControllers()
+    {
+        _vm.SetControllers(_session.Controllers, _session.Atis);
+        ApplyPositions();
+    }
 
     /// <summary>Double click: ATIS stations are requested, controllers are tuned on the TX radio.</summary>
     private async void OnControllerDoubleClick(object sender, MouseButtonEventArgs e)
@@ -594,6 +613,100 @@ public partial class MainWindow : Window
         {
             if (list.Items.Count > 0) list.ScrollIntoView(list.Items[^1]);
         };
+    }
+
+    // ---- positions panel -----------------------------------------------------------------
+
+    private void InitPositionsClient()
+    {
+        var baseUrl = _settings.Website.Trim();
+        if (baseUrl.Length == 0) baseUrl = "https://sky.network.npzy2.us/";
+        if (!baseUrl.Contains("://")) baseUrl = "https://" + baseUrl;
+        if (!baseUrl.EndsWith('/')) baseUrl += "/";
+        if (Uri.TryCreate(baseUrl, UriKind.Absolute, out var uri))
+            _positionsClient = new PositionsClient(Http, uri);
+    }
+
+    private async Task RefreshPositionsAsync()
+    {
+        if (_positionsClient == null) return;
+        try
+        {
+            double? lat = _own?.State.Latitude;
+            double? lon = _own?.State.Longitude;
+            _lastPositions = await _positionsClient.FetchAsync(lat, lon);
+            ApplyPositions();
+            _vm.PositionsOffline = false;
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or OperationCanceledException)
+        {
+            _vm.PositionsOffline = _lastPositions.Count == 0;
+        }
+    }
+
+    private void ApplyPositions()
+    {
+        var controllers = _session?.Controllers ?? [];
+        var merged = PositionsClient.Merge(_lastPositions, controllers);
+        _vm.UpdatePositions(merged);
+    }
+
+    private void OnPositionDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListBox { SelectedItem: PositionRow row }) return;
+        if (row.FrequencyKhz <= 0) return;
+        if (_sim.IsConnected) _sim.SetComFrequency(1, row.FrequencyKhz);
+        else Error("Simulator not connected");
+    }
+
+    // ---- charts --------------------------------------------------------------------------
+
+    private static void OpenChartFox(string icao)
+    {
+        icao = icao.Trim().ToUpperInvariant();
+        if (icao.Length < 3) return;
+        Process.Start(new ProcessStartInfo($"https://chartfox.org/{icao}") { UseShellExecute = true });
+    }
+
+    private void OnChartsClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn)
+        {
+            btn.ContextMenu!.PlacementTarget = btn;
+            btn.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            btn.ContextMenu.IsOpen = true;
+        }
+    }
+
+    private void OnChartsMenuOpened(object sender, RoutedEventArgs e)
+    {
+        var dep = _vm.DepartureIcao;
+        var arr = _vm.DestinationIcao;
+        var near = _nearestAirport;
+
+        ChartsDepartureItem.Header = _vm.HasDepartureIcao
+            ? string.Format(Strings.ChartsDeparture, dep) : Strings.ChartsDeparture.Replace("{0}", "---");
+        ChartsDepartureItem.IsEnabled = _vm.HasDepartureIcao;
+
+        ChartsArrivalItem.Header = _vm.HasDestinationIcao
+            ? string.Format(Strings.ChartsArrival, arr) : Strings.ChartsArrival.Replace("{0}", "---");
+        ChartsArrivalItem.IsEnabled = _vm.HasDestinationIcao;
+
+        ChartsNearestItem.Header = near != null
+            ? string.Format(Strings.ChartsNearest, near) : Strings.ChartsNearest.Replace("{0}", "---");
+        ChartsNearestItem.IsEnabled = near != null;
+    }
+
+    private void OnChartsDepartureClick(object sender, RoutedEventArgs e) => OpenChartFox(_vm.DepartureIcao);
+    private void OnChartsArrivalClick(object sender, RoutedEventArgs e) => OpenChartFox(_vm.DestinationIcao);
+    private void OnChartsNearestClick(object sender, RoutedEventArgs e) => OpenChartFox(_nearestAirport ?? "");
+
+    private void OnChartsForClick(object sender, RoutedEventArgs e)
+    {
+        // Simple inline ICAO prompt via a small dialog.
+        var dlg = new ChartsIcaoDialog { Owner = this };
+        if (dlg.ShowDialog() == true && dlg.Icao.Length >= 3)
+            OpenChartFox(dlg.Icao);
     }
 
     // ---- keyboard shortcuts ---------------------------------------------------------------

@@ -3,6 +3,7 @@ using SkyNetwork.Voice;
 using SkyPilot.App.Resources;
 using SkyPilot.Core.Model;
 using SkyPilot.Core.Session;
+using SkyPilot.Core.Web;
 
 namespace SkyPilot.App.ViewModels;
 
@@ -12,6 +13,28 @@ public sealed record AtcRow(string Callsign, string Frequency, string Facility, 
     bool IsAtis = false, string Letter = "", string? AtisText = null)
 {
     public bool HasLetter => Letter.Length > 0;
+}
+
+/// <summary>One row in the ATC positions panel.</summary>
+public sealed record PositionRow(
+    string Callsign,
+    string Frequency,
+    string Facility,
+    PositionState State,
+    string? Name,
+    string? NextBookingText,
+    int FrequencyKhz)
+{
+    /// <summary>Dot color: green = online, amber = booked, gray = free.</summary>
+    public string DotColor => State switch
+    {
+        PositionState.Online => "#3FA34D",
+        PositionState.Booked => "#E0A030",
+        _                    => "#7A7A7A",
+    };
+
+    public bool IsOnline  => State == PositionState.Online;
+    public bool IsBooked  => State == PositionState.Booked;
 }
 
 public sealed class MainViewModel : Observable
@@ -41,6 +64,9 @@ public sealed class MainViewModel : Observable
     private bool _voiceFailing;
     private bool _transmitting;
     private string _com1Heard = "", _com2Heard = "";
+    private string _positionFilter = "";
+    private bool _positionsOffline;
+    private List<PositionRow> _allPositions = [];
 
     public MainViewModel()
     {
@@ -52,6 +78,7 @@ public sealed class MainViewModel : Observable
     public ChatTab RadioTab { get; }
     public ObservableCollection<ChatTab> Tabs { get; } = [];
     public ObservableCollection<AtcRow> Controllers { get; } = [];
+    public ObservableCollection<PositionRow> Positions { get; } = [];
 
     public ChatTab? SelectedTab
     {
@@ -232,6 +259,10 @@ public sealed class MainViewModel : Observable
             if (!Set(ref _flightPlan, value)) return;
             RaisePropertyChanged(nameof(HasFlightPlan));
             RaisePropertyChanged(nameof(FlightPlanText));
+            RaisePropertyChanged(nameof(DepartureIcao));
+            RaisePropertyChanged(nameof(DestinationIcao));
+            RaisePropertyChanged(nameof(HasDepartureIcao));
+            RaisePropertyChanged(nameof(HasDestinationIcao));
         }
     }
 
@@ -240,6 +271,65 @@ public sealed class MainViewModel : Observable
     public string FlightPlanText => FlightPlan is { } p
         ? $"{p.Departure} → {p.Destination}   {p.AircraftType}   {p.CruiseAltitude}"
         : Strings.FlightPlanNone;
+
+    /// <summary>Departure ICAO from flight plan, or empty.</summary>
+    public string DepartureIcao    => FlightPlan?.Departure ?? "";
+    /// <summary>Destination ICAO from flight plan, or empty.</summary>
+    public string DestinationIcao  => FlightPlan?.Destination ?? "";
+    public bool HasDepartureIcao   => DepartureIcao.Length >= 3;
+    public bool HasDestinationIcao => DestinationIcao.Length >= 3;
+
+    // ---- positions panel ----------------------------------------------------------------
+
+    /// <summary>Filter text box content (case-insensitive substring match).</summary>
+    public string PositionFilter
+    {
+        get => _positionFilter;
+        set { if (Set(ref _positionFilter, value)) ApplyPositionFilter(); }
+    }
+
+    /// <summary>True when the last refresh returned an error; shows an offline hint.</summary>
+    public bool PositionsOffline
+    {
+        get => _positionsOffline;
+        set => Set(ref _positionsOffline, value);
+    }
+
+    /// <summary>Replace the positions list and apply the current filter.</summary>
+    public void UpdatePositions(IReadOnlyList<PositionEntry> entries)
+    {
+        _allPositions = entries.Select(ToRow).ToList();
+        ApplyPositionFilter();
+    }
+
+    private static PositionRow ToRow(PositionEntry e)
+    {
+        string? nextText = e.NextBooking is { } nb
+            ? nb.ToLocalTime().ToString("HH:mm")
+            : null;
+
+        // Try to parse frequency to kHz for tuning.
+        int khz = 0;
+        if (e.Frequency.Length > 0)
+            SkyPilot.Core.Model.Frequency.TryParse(e.Frequency, out khz);
+
+        return new PositionRow(e.Callsign, e.Frequency, e.Facility, e.State, e.Name, nextText, khz);
+    }
+
+    private void ApplyPositionFilter()
+    {
+        var filter = _positionFilter.Trim();
+        var filtered = string.IsNullOrEmpty(filter)
+            ? _allPositions
+            : _allPositions.Where(r =>
+                r.Callsign.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                r.Facility.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                r.Frequency.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        Positions.Clear();
+        foreach (var row in filtered)
+            Positions.Add(row);
+    }
 
     // ---- misc ----------------------------------------------------------------------------
 

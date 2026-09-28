@@ -240,4 +240,31 @@
   <data name="AlwaysOnTopTip" xml:space="preserve">
     <value>Поверх всех окон</value>
   </data>
+  <data name="SettingsTip" xml:space="preserve">
+    <value>Настройки (Ctrl+S)</value>
+  </data>
+  <data name="PositionsCaption" xml:space="preserve">
+    <value>ПОЗИЦИИ</value>
+  </data>
+  <data name="PositionsFilterHint" xml:space="preserve">
+    <value>Фильтр…</value>
+  </data>
+  <data name="PositionsOfflineHint" xml:space="preserve">
+    <value>позиции недоступны</value>
+  </data>
+  <data name="ChartsButton" xml:space="preserve">
+    <value>СХЕМЫ</value>
+  </data>
+  <data name="ChartsDeparture" xml:space="preserve">
+    <value>Схемы вылета ({0})</value>
+  </data>
+  <data name="ChartsArrival" xml:space="preserve">
+    <value>Схемы прилёта ({0})</value>
+  </data>
+  <data name="ChartsNearest" xml:space="preserve">
+    <value>Схемы ближайшего аэропорта ({0})</value>
+  </data>
+  <data name="ChartsFor" xml:space="preserve">
+    <value>Схемы для…</value>
+  </data>
 </root>

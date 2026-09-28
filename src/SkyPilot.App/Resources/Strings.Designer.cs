@@ -80,4 +80,13 @@ internal static class Strings
     public static string WebsiteLabel      => Get(nameof(WebsiteLabel));
     public static string PinButton         => Get(nameof(PinButton));
     public static string AlwaysOnTopTip    => Get(nameof(AlwaysOnTopTip));
+    public static string SettingsTip       => Get(nameof(SettingsTip));
+    public static string PositionsCaption  => Get(nameof(PositionsCaption));
+    public static string PositionsFilterHint => Get(nameof(PositionsFilterHint));
+    public static string PositionsOfflineHint => Get(nameof(PositionsOfflineHint));
+    public static string ChartsButton      => Get(nameof(ChartsButton));
+    public static string ChartsDeparture   => Get(nameof(ChartsDeparture));
+    public static string ChartsArrival     => Get(nameof(ChartsArrival));
+    public static string ChartsNearest     => Get(nameof(ChartsNearest));
+    public static string ChartsFor         => Get(nameof(ChartsFor));
 }

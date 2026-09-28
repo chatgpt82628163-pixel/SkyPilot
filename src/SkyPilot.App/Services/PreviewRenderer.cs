@@ -8,6 +8,7 @@ using SkyPilot.App.ViewModels;
 using SkyPilot.App.Views;
 using SkyPilot.Core.Session;
 using SkyPilot.Core.Settings;
+using SkyPilot.Core.Web;
 
 namespace SkyPilot.App.Services;
 
@@ -33,14 +34,14 @@ internal static class PreviewRenderer
 
         // English previews
         SetCulture("en");
-        TryRender(() => RenderMainWindow(outputFolder, settings, "en"),     "main-window-en");
+        TryRender(() => RenderMainWindow(outputFolder, settings, "en"),     "main-connected-en");
         TryRender(() => RenderConnectWindow(outputFolder, settings, "en"),  "connect-dialog-en");
         TryRender(() => RenderSettingsWindow(outputFolder, settings, "en"), "settings-en");
         TryRender(() => RenderFirstRunWindow(outputFolder, settings, "en"), "first-run-en");
 
         // Russian previews
         SetCulture("ru");
-        TryRender(() => RenderMainWindow(outputFolder, settings, "ru"),     "main-window-ru");
+        TryRender(() => RenderMainWindow(outputFolder, settings, "ru"),     "main-connected-ru");
         TryRender(() => RenderConnectWindow(outputFolder, settings, "ru"),  "connect-dialog-ru");
         TryRender(() => RenderSettingsWindow(outputFolder, settings, "ru"), "settings-ru");
         TryRender(() => RenderFirstRunWindow(outputFolder, settings, "ru"), "first-run-ru");
@@ -91,16 +92,30 @@ internal static class PreviewRenderer
         var priv = vm.GetPrivateTab("SUP1");
         priv.Lines.Add(new ChatLine("13:43:00", "SUP1", "Hello, need any help?", blue));
 
-        // ATC list: facility int codes — 5=APP, 4=TWR, 7=ATIS.
+        // ATC list (online from network): facility int codes — 5=APP, 4=TWR, 7=ATIS.
         // COM1 is 119.400 = 119400 kHz which matches UWWW_APP, so the station name appears under COM 1.
-        vm.SetControllers(
-        [
+        var onlineStations = new[]
+        {
             new SkyPilot.Core.Session.AtcStation("UWWW_APP",  119400, 5, DateTime.UtcNow),
             new SkyPilot.Core.Session.AtcStation("UWWW_TWR",  118100, 4, DateTime.UtcNow),
             new SkyPilot.Core.Session.AtcStation("UWWW_ATIS", 126950, 7, DateTime.UtcNow),
-        ],
-        new Dictionary<string, SkyPilot.Core.Session.AtisInfo>());
+        };
+        vm.SetControllers(onlineStations, new Dictionary<string, SkyPilot.Core.Session.AtisInfo>());
         vm.SetFrequencies(119400, 121500);
+
+        // Positions panel: mix of online, booked, and free states.
+        var now = DateTime.UtcNow;
+        var entries = new List<PositionEntry>
+        {
+            new("UWWW_APP",  "APP", "119.400", null, PositionState.Online, "Ivan Petrov",    now, null),
+            new("UWWW_TWR",  "TWR", "118.100", null, PositionState.Online, "Alexei Sokolov", now, null),
+            new("UWWW_ATIS", "ATIS","126.950", null, PositionState.Online, null,             now, null),
+            new("UWWW_DEL",  "DEL", "121.700", null, PositionState.Booked, null, null, now.AddHours(1)),
+            new("UWWW_GND",  "GND", "121.900", null, PositionState.Free,   null, null, null),
+            new("UWWW_CTR",  "CTR", "132.500", null, PositionState.Free,   null, null, null),
+        };
+        var merged = PositionsClient.Merge(entries, onlineStations);
+        vm.UpdatePositions(merged);
 
         Save(new MainWindow(vm), 1060, 500,
             Path.Combine(folder, $"main-connected-{lang}.png"), 1);
@@ -123,7 +138,8 @@ internal static class PreviewRenderer
         // Show first-run for a fresh account (Cid = 0 triggers the wizard in real usage).
         var fresh = new AppSettings { RealName = "", HomeAirport = "", Cid = 0 };
         var win = new FirstRunWindow(fresh);
-        Save(win, 480, 640, Path.Combine(folder, $"first-run-{lang}.png"), 1);
+        // 680 px ensures the "Save and continue" button is fully visible.
+        Save(win, 480, 680, Path.Combine(folder, $"first-run-{lang}.png"), 1);
     }
 
     // -----------------------------------------------------------------------

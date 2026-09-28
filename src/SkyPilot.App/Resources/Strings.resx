@@ -240,4 +240,31 @@
   <data name="AlwaysOnTopTip" xml:space="preserve">
     <value>Always on top</value>
   </data>
+  <data name="SettingsTip" xml:space="preserve">
+    <value>Settings (Ctrl+S)</value>
+  </data>
+  <data name="PositionsCaption" xml:space="preserve">
+    <value>POSITIONS</value>
+  </data>
+  <data name="PositionsFilterHint" xml:space="preserve">
+    <value>Filter…</value>
+  </data>
+  <data name="PositionsOfflineHint" xml:space="preserve">
+    <value>positions offline</value>
+  </data>
+  <data name="ChartsButton" xml:space="preserve">
+    <value>CHARTS</value>
+  </data>
+  <data name="ChartsDeparture" xml:space="preserve">
+    <value>Departure charts ({0})</value>
+  </data>
+  <data name="ChartsArrival" xml:space="preserve">
+    <value>Arrival charts ({0})</value>
+  </data>
+  <data name="ChartsNearest" xml:space="preserve">
+    <value>Nearest airport charts ({0})</value>
+  </data>
+  <data name="ChartsFor" xml:space="preserve">
+    <value>Charts for…</value>
+  </data>
 </root>
