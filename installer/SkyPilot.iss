@@ -5,7 +5,7 @@
 ;   SkyPilot-Setup-x.y.z.exe /SILENT /SP- /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS /LAUNCH=1
 
 #ifndef AppVersion
-  #define AppVersion "0.1.0"
+  #define AppVersion "0.3.0"
 #endif
 #ifndef SourceDir
   #define SourceDir "..\publish\SkyPilot"
@@ -23,8 +23,8 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
 AppPublisher=SkyNetwork
-AppPublisherURL=https://github.com/Anntixs/skypilot
-AppSupportURL=https://github.com/Anntixs/skypilot/issues
+AppPublisherURL=https://sky.network.npzy2.us/docs/software
+AppSupportURL=https://sky.network.npzy2.us/support
 VersionInfoVersion={#AppVersion}
 DefaultDirName={autopf}\SkyNetwork\{#AppName}
 DefaultGroupName=SkyNetwork

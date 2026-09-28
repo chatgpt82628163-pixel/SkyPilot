@@ -8,6 +8,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <RootNamespace>SkyPilot.App</RootNamespace>
     <AssemblyName>SkyPilot</AssemblyName>
+    <Version>0.3.0</Version>
+    <FileVersion>0.3.0.0</FileVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\SkyPilot.ico</ApplicationIcon>
   </PropertyGroup>

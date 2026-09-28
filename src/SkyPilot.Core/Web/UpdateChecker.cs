@@ -6,21 +6,21 @@ using System.Text.Json.Serialization;
 
 namespace SkyPilot.Core.Web;
 
-/// <param name="Tag">The release tag as written on GitHub ("0.2.0", "v0.2.0").</param>
+/// <param name="Tag">The release tag ("0.2.0", "v0.2.0").</param>
 /// <param name="SetupUrl">Download of the installer, or of a zip with the installer inside; null when the release has neither.</param>
-/// <param name="SetupSha256">The checksum GitHub keeps for the download (lower-case hex), when it has one.</param>
+/// <param name="SetupSha256">The sha256 checksum of the download (lower-case hex), when it has one.</param>
 public sealed record ReleaseInfo(Version Version, string Tag, Uri Page, Uri? SetupUrl, long SetupSize, string? SetupSha256 = null)
 {
     public bool SetupIsZip => SetupUrl?.AbsolutePath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) == true;
 }
 
 /// <summary>
-/// Looks up the newest release on GitHub and fetches its installer, which the program then runs silently to update
-/// itself. Any failure of the check (offline, no releases yet, rate limit) means "nothing new".
+/// Looks up the newest release on sky.network and fetches its installer, which the program then runs silently to update
+/// itself. Any failure of the check (offline, no releases yet) means "nothing new".
 /// </summary>
-public sealed class UpdateChecker(HttpClient http, string repository = UpdateChecker.DefaultRepository, string setupPrefix = UpdateChecker.DefaultSetupPrefix)
+public sealed class UpdateChecker(HttpClient http, string apiBase = UpdateChecker.DefaultApiBase, string setupPrefix = UpdateChecker.DefaultSetupPrefix)
 {
-    public const string DefaultRepository = "Anntixs/skypilot";
+    public const string DefaultApiBase = "https://sky.network.npzy2.us/api/v1/releases/skypilot";
     public const string DefaultSetupPrefix = "SkyPilot-Setup-";
 
     /// <summary>
@@ -29,7 +29,7 @@ public sealed class UpdateChecker(HttpClient http, string repository = UpdateChe
     /// </summary>
     public const string SilentArguments = "/SILENT /SP- /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS /LAUNCH=1";
 
-    public Uri LatestReleaseApi => new($"https://api.github.com/repos/{repository}/releases/latest");
+    public Uri LatestReleaseApi => new($"{apiBase.TrimEnd('/')}/latest");
 
     /// <summary>
     /// The newest release if it is newer than <paramref name="current"/>, otherwise null. A release whose tag is
@@ -42,16 +42,18 @@ public sealed class UpdateChecker(HttpClient http, string repository = UpdateChe
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, LatestReleaseApi);
             request.Headers.UserAgent.ParseAdd(UserAgent);
-            request.Headers.Accept.ParseAdd("application/vnd.github+json");
             using var response = await http.SendAsync(request, ct).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.OK) return null;
             var release = await response.Content.ReadFromJsonAsync<ReleaseDto>(ct).ConfigureAwait(false);
             if (release?.Tag == null || release.Draft || release.Prerelease || !TryParseTag(release.Tag, out var version)) return null;
             if (version <= Normalize(current)) return null;
             if (installedTag != null && string.Equals(installedTag.Trim(), release.Tag.Trim(), StringComparison.OrdinalIgnoreCase)) return null;
-            var page = Uri.TryCreate(release.Url, UriKind.Absolute, out var uri) ? uri : new Uri($"https://github.com/{repository}/releases/latest");
+            var page = Uri.TryCreate(release.Url, UriKind.Absolute, out var uri) ? uri : new Uri("https://sky.network.npzy2.us/docs/software");
             var setup = Asset(release, ".exe") ?? Asset(release, ".zip");
-            return new ReleaseInfo(version, release.Tag.Trim(), page, setup == null ? null : new Uri(setup.Url!), setup?.Size ?? 0, Sha256Of(setup));
+            var sha = Sha256Of(setup);
+            // Never offer an installer that has no sha256 digest — it cannot be verified.
+            if (setup != null && sha == null) return null;
+            return new ReleaseInfo(version, release.Tag.Trim(), page, setup == null ? null : new Uri(setup.Url!), setup?.Size ?? 0, sha);
         }
         catch (Exception e) when (e is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException or NotSupportedException)
         {
@@ -61,7 +63,7 @@ public sealed class UpdateChecker(HttpClient http, string repository = UpdateChe
 
     private string UserAgent => setupPrefix.TrimEnd('-').Replace("-Setup", "", StringComparison.OrdinalIgnoreCase);
 
-    // The installer itself ("SkyPilot-Setup-0.2.0.exe"), or a zip with it inside, as a build artifact uploaded by hand.
+    // The installer itself ("SkyPilot-Setup-0.2.0.exe"), or a zip with it inside.
     private AssetDto? Asset(ReleaseDto release, string extension) => release.Assets?.FirstOrDefault(a =>
         a.Name != null && a.Name.StartsWith(setupPrefix, StringComparison.OrdinalIgnoreCase) &&
         a.Name.EndsWith(extension, StringComparison.OrdinalIgnoreCase) && Uri.TryCreate(a.Url, UriKind.Absolute, out _));

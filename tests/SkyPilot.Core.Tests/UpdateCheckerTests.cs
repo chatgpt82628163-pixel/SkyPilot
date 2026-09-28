@@ -6,7 +6,7 @@ using SkyPilot.Core.Web;
 
 namespace SkyPilot.Core.Tests;
 
-/// <summary>The program finds a newer release on GitHub, downloads its installer and checks it before running it.</summary>
+/// <summary>The program finds a newer release on sky.network, downloads its installer and checks it before running it.</summary>
 public class UpdateCheckerTests
 {
     /// <summary>Serves the release JSON for the API and the given bytes for any download.</summary>
@@ -28,7 +28,7 @@ public class UpdateCheckerTests
     }
 
     private static string Release(string tag, string assets = "") => $$"""
-        { "tag_name": "{{tag}}", "html_url": "https://github.com/Anntixs/skypilot/releases/tag/{{tag}}", "assets": [ {{assets}} ] }
+        { "tag_name": "{{tag}}", "html_url": "https://sky.network.npzy2.us/docs/software", "assets": [ {{assets}} ] }
         """;
 
     private static string Asset(string name, long size, string? sha = null) =>
@@ -55,14 +55,14 @@ public class UpdateCheckerTests
         Assert.Equal((new Version(0, 2, 0), "0.2.0"), (info!.Version, info.Tag));
         Assert.Equal("https://example.test/SkyPilot-Setup-0.2.0.exe", info.SetupUrl!.ToString());
         Assert.Equal((12345L, new string('a', 64), false), (info.SetupSize, info.SetupSha256, info.SetupIsZip));
-        Assert.Equal("https://api.github.com/repos/Anntixs/skypilot/releases/latest", server.LastApiRequest!.RequestUri!.ToString());
+        Assert.Equal("https://sky.network.npzy2.us/api/v1/releases/skypilot/latest", server.LastApiRequest!.RequestUri!.ToString());
         Assert.Contains("SkyPilot", server.LastApiRequest.Headers.UserAgent.ToString());
     }
 
     [Fact]
     public async Task SameOrOlder_OrAlreadyInstalledByUs_IsNothing()
     {
-        var checker = new UpdateChecker(new HttpClient(new ReleaseServer(Release("v0.3.0", Asset("SkyPilot-Setup-0.3.0.exe", 5000)))));
+        var checker = new UpdateChecker(new HttpClient(new ReleaseServer(Release("v0.3.0", Asset("SkyPilot-Setup-0.3.0.exe", 5000, new string('b', 64))))));
         Assert.Null(await checker.CheckAsync(new Version(0, 3, 0, 0)));   // the program's own version has four parts
         Assert.Null(await checker.CheckAsync(new Version(1, 0, 0)));
         // A release whose installer says it is an older version: offered once, not again after installing it.
@@ -80,7 +80,15 @@ public class UpdateCheckerTests
         // A release without an installer is still reported, with its page, so the user can get it by hand.
         var bare = await new UpdateChecker(new HttpClient(new ReleaseServer(Release("0.9.0")))).CheckAsync(new Version(0, 1));
         Assert.Null(bare!.SetupUrl);
-        Assert.Equal("https://github.com/Anntixs/skypilot/releases/tag/0.9.0", bare.Page.ToString());
+        Assert.Equal("https://sky.network.npzy2.us/docs/software", bare.Page.ToString());
+    }
+
+    [Fact]
+    public async Task AnInstallerWithoutDigest_IsNotOffered()
+    {
+        // The site must include a sha256 digest; without it the download cannot be verified and is silently skipped.
+        var checker = new UpdateChecker(new HttpClient(new ReleaseServer(Release("0.9.0", Asset("SkyPilot-Setup-0.9.0.exe", 5000)))));
+        Assert.Null(await checker.CheckAsync(new Version(0, 1)));
     }
 
     [Fact]
