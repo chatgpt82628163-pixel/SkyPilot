@@ -78,7 +78,7 @@ internal static class PreviewRenderer
         priv.Lines.Add(new ChatLine("13:43:00", "SUP1", "Hello, need any help?", blue));
 
         // ATC list: facility int codes — 5=APP, 4=TWR, 7=ATIS.
-        // COM1 is 119.400 which matches UWWW_APP, so the station name appears under COM 1.
+        // COM1 is 119.400 = 119400 kHz which matches UWWW_APP, so the station name appears under COM 1.
         vm.SetControllers(
         [
             new SkyPilot.Core.Session.AtcStation("UWWW_APP",  119400, 5, DateTime.UtcNow),
@@ -86,6 +86,7 @@ internal static class PreviewRenderer
             new SkyPilot.Core.Session.AtcStation("UWWW_ATIS", 126950, 7, DateTime.UtcNow),
         ],
         new Dictionary<string, SkyPilot.Core.Session.AtisInfo>());
+        vm.SetFrequencies(119400, 121500);
 
         Save(new MainWindow(vm), 1060, 500,
             Path.Combine(folder, $"main-connected-{lang}.png"), 1);
@@ -100,7 +101,7 @@ internal static class PreviewRenderer
     private static void RenderSettingsWindow(string folder, AppSettings settings, string lang)
     {
         var win = new SettingsWindow(settings);
-        Save(win, 660, 700, Path.Combine(folder, $"settings-{lang}.png"), 1);
+        Save(win, 660, 800, Path.Combine(folder, $"settings-{lang}.png"), 1);
     }
 
     private static void RenderFirstRunWindow(string folder, AppSettings settings, string lang)

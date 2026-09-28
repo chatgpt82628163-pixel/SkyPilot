@@ -150,6 +150,15 @@ public sealed class MainViewModel : Observable
         return string.IsNullOrEmpty(s.FacilityText) ? s.Callsign : $"{s.Callsign}  {s.FacilityText}";
     }
 
+    /// <summary>Set frequencies in kHz for preview and testing without a full OwnAircraftData object.</summary>
+    public void SetFrequencies(int com1Khz, int com2Khz)
+    {
+        _com1Khz = com1Khz;
+        _com2Khz = com2Khz;
+        RaisePropertyChanged(nameof(Com1Station));
+        RaisePropertyChanged(nameof(Com2Station));
+    }
+
     public void UpdateRadios(OwnAircraftData own)
     {
         _com1Khz = own.Com1Khz;
