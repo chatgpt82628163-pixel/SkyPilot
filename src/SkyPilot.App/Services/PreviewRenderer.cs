@@ -85,7 +85,7 @@ internal static class PreviewRenderer
     private static void RenderSettingsWindow(string folder, AppSettings settings)
     {
         var win = new SettingsWindow(settings);
-        Save(win, 720, 660, System.IO.Path.Combine(folder, "settings.png"), 1);
+        Save(win, 720, 700, System.IO.Path.Combine(folder, "settings.png"), 1);
     }
 
     // -----------------------------------------------------------------------
