@@ -14,11 +14,21 @@ jobs:
       - name: Build
         run: dotnet build src/SkyPilot.App -c Release
       - name: Render previews
-        run: |
-          $exe = Get-ChildItem -Recurse -Filter SkyPilot.exe | Select-Object -First 1 -ExpandProperty FullName
-          & $exe --render-previews previews
         shell: pwsh
+        run: |
+          $out = Join-Path $env:GITHUB_WORKSPACE "previews"
+          New-Item -ItemType Directory -Force -Path $out | Out-Null
+          $exe = Get-ChildItem -Recurse -Filter SkyPilot.exe | Select-Object -First 1 -ExpandProperty FullName
+          Write-Host "Exe: $exe"
+          Write-Host "Output: $out"
+          & $exe --render-previews $out
+          $code = $LASTEXITCODE
+          Write-Host "Exit code: $code"
+          Get-ChildItem $out -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
+          if ($code -ne 0) { exit $code }
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ui-previews
           path: previews/
+          if-no-files-found: warn

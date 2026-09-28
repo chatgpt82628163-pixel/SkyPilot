@@ -94,9 +94,16 @@ internal static class PreviewRenderer
         win.ShowInTaskbar = false;
         win.AllowsTransparency = false;
 
+        // Show the window off-screen so WPF materializes all templates, then move it off-screen.
+        win.Left = -9999;
+        win.Top = -9999;
+        win.Show();
+        win.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+
         win.Measure(new Size(w, h));
         win.Arrange(new Rect(0, 0, w, h));
         win.UpdateLayout();
+        win.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
 
         double dpi = 96.0 * scale;
         var rtb = new RenderTargetBitmap(
@@ -109,5 +116,7 @@ internal static class PreviewRenderer
         encoder.Frames.Add(BitmapFrame.Create(rtb));
         using var fs = File.OpenWrite(path);
         encoder.Save(fs);
+
+        win.Close();
     }
 }
