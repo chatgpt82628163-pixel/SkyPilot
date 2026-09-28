@@ -16,6 +16,8 @@ public partial class App : Application
         int idx = Array.IndexOf(args, "--render-previews");
         if (idx >= 0 && idx + 1 < args.Length)
         {
+            // Prevent WPF from shutting down when each preview window closes.
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
             // Swallow async WPF-dispatcher errors so partial PNG output is still uploaded.
             DispatcherUnhandledException += (_, ex) =>
             {
