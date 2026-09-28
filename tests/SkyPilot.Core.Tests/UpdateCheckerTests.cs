@@ -16,7 +16,7 @@ public class UpdateCheckerTests
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
-            if (request.RequestUri!.AbsolutePath.EndsWith("/releases/latest", StringComparison.Ordinal))
+            if (request.RequestUri!.AbsolutePath.EndsWith("/latest", StringComparison.Ordinal))
             {
                 LastApiRequest = request;
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(json, Encoding.UTF8, "application/json") });
