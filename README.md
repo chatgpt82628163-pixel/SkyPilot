@@ -55,7 +55,7 @@ SkyPilot — пилотный клиент пилотной программы S
 
 ## Скриншоты
 
-![Главное окно](https://sky.network.npzy2.us/docs/software)
+[Главное окно](https://sky.network.npzy2.us/docs/software)
 
 > Актуальные скриншоты — на сайте [sky.network.npzy2.us](https://sky.network.npzy2.us).
 
@@ -85,6 +85,7 @@ SkyPilot — пилотный клиент пилотной программы S
 ### Сборка .NET (Windows)
 ```
 dotnet build SkyPilot.sln -c Release
+dotnet publish src/SkyPilot.App -c Release -r win-x64 --self-contained true
 ```
 
 ### Запуск тестов
@@ -153,7 +154,7 @@ SkyPilot.sln
 ├── installer/
 │   └── SkyPilot.iss           Скрипт Inno Setup
 └── docs/
-    └── logo.png
+    └── …
 ```
 
 ## Часть SkyNetwork
@@ -191,6 +192,7 @@ SkyPilot — один из компонентов проекта SkyNetwork:
 **Build:**
 ```
 dotnet build SkyPilot.sln -c Release
+dotnet publish src/SkyPilot.App -c Release -r win-x64 --self-contained true
 dotnet test tests/SkyPilot.Core.Tests
 ```
 
