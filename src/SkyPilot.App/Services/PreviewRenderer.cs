@@ -73,9 +73,7 @@ internal static class PreviewRenderer
         vm.Controllers.Add(new AtcRow("UWWW_TWR", "118.100", "Ufa Tower", 118100));
         vm.Controllers.Add(new AtcRow("UWWW_ATIS", "126.950", "Ufa ATIS", 126950, IsAtis: true, Letter: "C"));
 
-        // Each Save closes the window; create a fresh instance per scale.
-        Save(new MainWindow(vm), 1060, 500, System.IO.Path.Combine(folder, "main-connected-1x.png"), 1);
-        Save(new MainWindow(vm), 1060, 500, System.IO.Path.Combine(folder, "main-connected-2x.png"), 2);
+        Save(new MainWindow(vm), 1060, 500, System.IO.Path.Combine(folder, "main-connected.png"), 1);
     }
 
     private static void RenderConnectWindow(string folder, AppSettings settings)
