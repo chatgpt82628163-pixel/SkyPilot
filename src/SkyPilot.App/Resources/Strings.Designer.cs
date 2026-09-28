@@ -1,4 +1,5 @@
 // Auto-generated — do not edit. Add keys in Strings.resx / Strings.ru.resx.
+#nullable enable
 using System.Globalization;
 using System.Resources;
 
