@@ -29,9 +29,15 @@ internal static class PreviewRenderer
             LastTypeCode = "A20N",
         };
 
-        RenderMainWindow(outputFolder, settings);
-        RenderConnectWindow(outputFolder, settings);
-        RenderSettingsWindow(outputFolder, settings);
+        TryRender(() => RenderMainWindow(outputFolder, settings), "main-window");
+        TryRender(() => RenderConnectWindow(outputFolder, settings), "connect-dialog");
+        TryRender(() => RenderSettingsWindow(outputFolder, settings), "settings");
+    }
+
+    private static void TryRender(Action action, string name)
+    {
+        try { action(); }
+        catch (Exception ex) { Console.Error.WriteLine($"[preview] {name} failed: {ex.Message}"); }
     }
 
     // -----------------------------------------------------------------------
@@ -67,9 +73,9 @@ internal static class PreviewRenderer
         vm.Controllers.Add(new AtcRow("UWWW_TWR", "118.100", "Ufa Tower", 118100));
         vm.Controllers.Add(new AtcRow("UWWW_ATIS", "126.950", "Ufa ATIS", 126950, IsAtis: true, Letter: "C"));
 
-        var win = new MainWindow(vm);
-        Save(win, 1060, 500, System.IO.Path.Combine(folder, "main-connected-1x.png"), 1);
-        Save(win, 1060, 500, System.IO.Path.Combine(folder, "main-connected-2x.png"), 2);
+        // Each Save closes the window; create a fresh instance per scale.
+        Save(new MainWindow(vm), 1060, 500, System.IO.Path.Combine(folder, "main-connected-1x.png"), 1);
+        Save(new MainWindow(vm), 1060, 500, System.IO.Path.Combine(folder, "main-connected-2x.png"), 2);
     }
 
     private static void RenderConnectWindow(string folder, AppSettings settings)

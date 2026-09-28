@@ -9,7 +9,6 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        DispatcherUnhandledException += OnUnhandled;
         base.OnStartup(e);
 
         // --render-previews <folder>: render each window to PNG and exit without touching user data.
@@ -32,6 +31,7 @@ public partial class App : Application
             return;
         }
 
+        DispatcherUnhandledException += OnUnhandled;
         var mainWindow = new MainWindow();
         mainWindow.Show();
     }
