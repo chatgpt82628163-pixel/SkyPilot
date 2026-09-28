@@ -225,7 +225,7 @@
           <!-- COM 1 -->
           <StackPanel>
             <TextBlock Text="COM 1" Style="{StaticResource Caption}"/>
-            <Border Style="{StaticResource Box}">
+            <Border>
               <Border.Style>
                 <Style TargetType="Border" BasedOn="{StaticResource Box}">
                   <Style.Triggers>
@@ -259,7 +259,7 @@
           <!-- COM 2 -->
           <StackPanel Grid.Column="2">
             <TextBlock Text="COM 2" Style="{StaticResource Caption}"/>
-            <Border Style="{StaticResource Box}">
+            <Border>
               <Border.Style>
                 <Style TargetType="Border" BasedOn="{StaticResource Box}">
                   <Style.Triggers>
