@@ -1,7 +1,9 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using SkyPilot.App.Services;
 using SkyPilot.App.Views;
+using SkyPilot.Core.Settings;
 
 namespace SkyPilot.App;
 
@@ -40,6 +42,22 @@ public partial class App : Application
         }
 
         DispatcherUnhandledException += OnUnhandled;
+
+        // Show first-run wizard if the account is not configured yet.
+        var settingsPath = Path.Combine(AppSettings.DefaultDirectory, "settings.json");
+        var settings = AppSettings.Load(settingsPath);
+        if (settings.Cid == 0 || settings.ProtectedPassword.Length == 0)
+        {
+            var firstRun = new FirstRunWindow(settings);
+            bool? result = firstRun.ShowDialog();
+            if (result != true)
+            {
+                Shutdown(0);
+                return;
+            }
+            settings.Save(settingsPath);
+        }
+
         var mainWindow = new MainWindow();
         mainWindow.Show();
     }

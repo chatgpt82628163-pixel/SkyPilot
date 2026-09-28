@@ -1,21 +1,28 @@
 <Window x:Class="SkyPilot.App.Views.ConnectWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Connect" Width="400" SizeToContent="Height" ResizeMode="NoResize"
+        Title="Connect" Width="380" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" Style="{StaticResource SkyWindow}">
   <StackPanel Margin="20">
-    <Label Content="Позывной / Callsign"/>
+    <!-- Network: fixed label, not editable here -->
+    <TextBlock Style="{StaticResource Caption}" Text="NETWORK"/>
+    <Border Style="{StaticResource Box}" Padding="10,8" Margin="0,0,0,8">
+      <TextBlock Text="SkyNetwork" FontWeight="SemiBold"/>
+    </Border>
+
+    <Label Content="Callsign"/>
     <TextBox x:Name="CallsignBox" CharacterCasing="Upper" MaxLength="12"/>
-    <Label Content="Тип ВС / Aircraft type"/>
-    <TextBox x:Name="TypeBox" CharacterCasing="Upper" MaxLength="4" ToolTip="ICAO code, e.g. A20N or B738"/>
-    <Label Content="Сервер / Server"/>
-    <!-- Server is read-only: SkyNetwork is pre-selected and cannot be changed here -->
-    <ComboBox x:Name="ServerBox" DisplayMemberPath="Name" IsEditable="False"/>
+
+    <Label Content="Aircraft type"/>
+    <TextBox x:Name="TypeBox" CharacterCasing="Upper" MaxLength="4"
+             ToolTip="ICAO type code, e.g. A20N or B738"/>
+
     <TextBlock x:Name="ErrorText" Foreground="{StaticResource Bad}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-      <Button Content="ПОДКЛЮЧИТЬСЯ / CONNECT" IsDefault="True" Click="OnOk"
-              Style="{StaticResource GreenButton}" Padding="16,8" Margin="0,0,8,0"/>
-      <Button Content="ОТМЕНА / CANCEL" IsCancel="True" Padding="12,8"/>
+      <Button Content="CONNECT" IsDefault="True" Click="OnOk"
+              Style="{StaticResource GreenButton}" Padding="20,8" Margin="0,0,8,0"/>
+      <Button Content="Cancel" IsCancel="True" Padding="14,8"/>
     </StackPanel>
   </StackPanel>
 </Window>

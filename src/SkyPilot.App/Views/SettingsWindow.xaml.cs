@@ -30,17 +30,22 @@ public partial class SettingsWindow : Window
         _settings = settings;
         _protector = protector;
         _micLevel = micLevel;
+
         CidBox.Text = settings.Cid > 0 ? settings.Cid.ToString() : "";
         PasswordBox.Password = protector.Unprotect(settings.ProtectedPassword);
         NameBox.Text = settings.RealName;
+        HomeBox.Text = settings.HomeAirport;
+
         var server = settings.CurrentServer;
         ServerBox.Text = $"{server.Host}:{server.Port}";
         WebsiteBox.Text = settings.Website;
         SimbriefBox.Text = settings.SimbriefUser;
+
         SimulatorBox.ItemsSource = SkyPilot.Core.Simulation.SimulatorKind.All.Select(k => new { k.Id, k.Title }).ToList();
         SimulatorBox.SelectedValue = settings.Simulator;
         if (SimulatorBox.SelectedIndex < 0) SimulatorBox.SelectedIndex = 0;
         P3dDllBox.Text = settings.P3dSimConnectPath;
+
         SoundBox.IsChecked = settings.PlaySoundOnPrivateMessage;
         TopmostBox.IsChecked = settings.KeepWindowOnTop;
         UpdatesBox.IsChecked = settings.CheckForUpdates;
@@ -55,6 +60,11 @@ public partial class SettingsWindow : Window
         _ptt = PttBinding.Parse(settings.PttKey);
         PttBox.Text = Describe(_ptt);
         VoicePortBox.Text = settings.VoicePort.ToString();
+
+        LanguageBox.Items.Add(new LangItem("", "Follow Windows"));
+        LanguageBox.Items.Add(new LangItem("en", "English"));
+        LanguageBox.Items.Add(new LangItem("ru", "Русский"));
+        LanguageBox.SelectedIndex = settings.Language switch { "en" => 1, "ru" => 2, _ => 0 };
 
         _meter.Tick += (_, _) => MicMeter.Value = _micLevel();
         _meter.Start();
@@ -92,7 +102,7 @@ public partial class SettingsWindow : Window
     private static string SelectedDevice(ComboBox box) =>
         box.SelectedIndex > 0 && box.SelectedItem is string name ? name : "";
 
-    /// <summary>The PTT control in English ("not assigned", "Joystick 1, button 5", or the key name).</summary>
+    /// <summary>The PTT control description in English.</summary>
     private static string Describe(PttBinding b) => b.Kind switch
     {
         PttKind.None => "not assigned",
@@ -109,7 +119,7 @@ public partial class SettingsWindow : Window
     private void OnSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (MicGainText != null) MicGainText.Text = $"{MicGainSlider.Value:0} %";
-        if (VolumeText != null) VolumeText.Text = $"{VolumeSlider.Value:0} %";
+        if (VolumeText  != null) VolumeText.Text  = $"{VolumeSlider.Value:0} %";
     }
 
     private async void OnPttCaptureClick(object sender, RoutedEventArgs e)
@@ -125,14 +135,13 @@ public partial class SettingsWindow : Window
         PttBox.Text = "Press a key or joystick button…";
         try
         {
-            // Polled off the UI thread so the window stays responsive.
             var binding = await Task.Run(() => PushToTalk.CaptureAsync(cts.Token));
             const int escape = 0x1B;
             if (binding.Kind != PttKind.None && binding != new PttBinding(PttKind.Keyboard, escape)) _ptt = binding;
         }
         catch (OperationCanceledException)
         {
-            // Cancelled, timed out or the window was closed: keep the old key.
+            // Cancelled, timed out, or window was closed: keep the old key.
         }
         finally
         {
@@ -174,11 +183,13 @@ public partial class SettingsWindow : Window
             ErrorText.Text = "Voice server port must be a number from 1 to 65535 (default 3782)";
             return;
         }
+
         _settings.Cid = cid;
         _settings.Website = website;
         _settings.SimbriefUser = SimbriefBox.Text.Trim();
         _settings.ProtectedPassword = _protector.Protect(PasswordBox.Password);
         _settings.RealName = NameBox.Text.Trim();
+        _settings.HomeAirport = HomeBox.Text.Trim().ToUpperInvariant();
         var server = _settings.CurrentServer;
         if (!_settings.Servers.Contains(server)) _settings.Servers.Add(server);
         server.Host = parts[0];
@@ -196,6 +207,12 @@ public partial class SettingsWindow : Window
         _settings.RadioNoise = RadioNoiseBox.IsChecked == true;
         _settings.PttKey = _ptt.ToString();
         _settings.VoicePort = voicePort;
+        _settings.Language = LanguageBox.SelectedItem is LangItem li ? li.Code : "";
         DialogResult = true;
+    }
+
+    private sealed record LangItem(string Code, string Name)
+    {
+        public override string ToString() => Name;
     }
 }

@@ -143,8 +143,12 @@ public sealed class MainViewModel : Observable
     public string Com1Station => StationOn(_com1Khz);
     public string Com2Station => StationOn(_com2Khz);
 
-    private string StationOn(int khz) =>
-        _stations.FirstOrDefault(s => Frequency.SameChannel(s.FrequencyKhz, khz))?.Callsign ?? "-";
+    private string StationOn(int khz)
+    {
+        var s = _stations.FirstOrDefault(st => Frequency.SameChannel(st.FrequencyKhz, khz));
+        if (s is null) return "";
+        return string.IsNullOrEmpty(s.FacilityText) ? s.Callsign : $"{s.Callsign}  {s.FacilityText}";
+    }
 
     public void UpdateRadios(OwnAircraftData own)
     {
@@ -159,6 +163,9 @@ public sealed class MainViewModel : Observable
     }
 
     public int TrafficCount { get => _trafficCount; set => Set(ref _trafficCount, value); }
+
+    /// <summary>Number of ATC stations currently in the list (matches what the ATC panel shows).</summary>
+    public int ControllerCount => Controllers.Count;
 
     // ---- voice ---------------------------------------------------------------------------
 
@@ -255,5 +262,6 @@ public sealed class MainViewModel : Observable
         }
         RaisePropertyChanged(nameof(Com1Station));
         RaisePropertyChanged(nameof(Com2Station));
+        RaisePropertyChanged(nameof(ControllerCount));
     }
 }

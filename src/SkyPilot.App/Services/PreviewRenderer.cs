@@ -29,9 +29,17 @@ internal static class PreviewRenderer
             LastTypeCode = "A20N",
         };
 
-        TryRender(() => RenderMainWindow(outputFolder, settings), "main-window");
-        TryRender(() => RenderConnectWindow(outputFolder, settings), "connect-dialog");
-        TryRender(() => RenderSettingsWindow(outputFolder, settings), "settings");
+        // English previews (default)
+        TryRender(() => RenderMainWindow(outputFolder, settings, "en"),     "main-window-en");
+        TryRender(() => RenderConnectWindow(outputFolder, settings, "en"),  "connect-dialog-en");
+        TryRender(() => RenderSettingsWindow(outputFolder, settings, "en"), "settings-en");
+        TryRender(() => RenderFirstRunWindow(outputFolder, settings, "en"), "first-run-en");
+
+        // Russian previews
+        TryRender(() => RenderMainWindow(outputFolder, settings, "ru"),     "main-window-ru");
+        TryRender(() => RenderConnectWindow(outputFolder, settings, "ru"),  "connect-dialog-ru");
+        TryRender(() => RenderSettingsWindow(outputFolder, settings, "ru"), "settings-ru");
+        TryRender(() => RenderFirstRunWindow(outputFolder, settings, "ru"), "first-run-ru");
     }
 
     private static void TryRender(Action action, string name)
@@ -42,7 +50,7 @@ internal static class PreviewRenderer
 
     // -----------------------------------------------------------------------
 
-    private static void RenderMainWindow(string folder, AppSettings settings)
+    private static void RenderMainWindow(string folder, AppSettings settings, string lang)
     {
         var vm = new MainViewModel();
         vm.NetConnected = true;
@@ -57,35 +65,50 @@ internal static class PreviewRenderer
 
         // Chat lines
         var green = new SolidColorBrush(Color.FromRgb(0x4C, 0xC3, 0x8A));
-        var white = new SolidColorBrush(Color.FromRgb(0xE6, 0xE9, 0xED));
-        var gray  = new SolidColorBrush(Color.FromRgb(0x8B, 0x95, 0xA1));
+        var white = new SolidColorBrush(Color.FromRgb(0xE6, 0xE6, 0xE6));
+        var gray  = new SolidColorBrush(Color.FromRgb(0xA8, 0xA8, 0xA8));
         green.Freeze(); white.Freeze(); gray.Freeze();
         vm.RadioTab.Lines.Add(new ChatLine("13:41:22", "Server", "Connected. Welcome!", green));
         vm.RadioTab.Lines.Add(new ChatLine("13:42:01", "UWWW_APP [119.400]", "AFL123, radar identified, climb FL350, direct GIMLI", white));
         vm.RadioTab.Lines.Add(new ChatLine("13:42:15", "AFL123", "Climbing FL350, direct GIMLI, AFL123", gray));
 
         // Private message tab
+        var blue = new SolidColorBrush(Color.FromRgb(0x6F, 0xA8, 0xFF)); blue.Freeze();
         var priv = vm.GetPrivateTab("SUP1");
-        priv.Lines.Add(new ChatLine("13:43:00", "SUP1", "Hello, need any help?", new SolidColorBrush(Color.FromRgb(0x3F, 0xA9, 0xF5))));
+        priv.Lines.Add(new ChatLine("13:43:00", "SUP1", "Hello, need any help?", blue));
 
-        // ATC list
-        vm.Controllers.Add(new AtcRow("UWWW_APP", "119.400", "Ufa Approach", 119400));
-        vm.Controllers.Add(new AtcRow("UWWW_TWR", "118.100", "Ufa Tower", 118100));
-        vm.Controllers.Add(new AtcRow("UWWW_ATIS", "126.950", "Ufa ATIS", 126950, IsAtis: true, Letter: "C"));
+        // ATC list: facility int codes — 5=APP, 4=TWR, 7=ATIS.
+        // COM1 is 119.400 which matches UWWW_APP, so the station name appears under COM 1.
+        vm.SetControllers(
+        [
+            new SkyPilot.Core.Session.AtcStation("UWWW_APP",  119400, 5, DateTime.UtcNow),
+            new SkyPilot.Core.Session.AtcStation("UWWW_TWR",  118100, 4, DateTime.UtcNow),
+            new SkyPilot.Core.Session.AtcStation("UWWW_ATIS", 126950, 7, DateTime.UtcNow),
+        ],
+        new Dictionary<string, SkyPilot.Core.Session.AtisInfo>());
 
-        Save(new MainWindow(vm), 1060, 500, System.IO.Path.Combine(folder, "main-connected.png"), 1);
+        Save(new MainWindow(vm), 1060, 500,
+            Path.Combine(folder, $"main-connected-{lang}.png"), 1);
     }
 
-    private static void RenderConnectWindow(string folder, AppSettings settings)
+    private static void RenderConnectWindow(string folder, AppSettings settings, string lang)
     {
         var win = new ConnectWindow(settings);
-        Save(win, 400, 320, System.IO.Path.Combine(folder, "connect-dialog.png"), 1);
+        Save(win, 380, 280, Path.Combine(folder, $"connect-dialog-{lang}.png"), 1);
     }
 
-    private static void RenderSettingsWindow(string folder, AppSettings settings)
+    private static void RenderSettingsWindow(string folder, AppSettings settings, string lang)
     {
         var win = new SettingsWindow(settings);
-        Save(win, 720, 700, System.IO.Path.Combine(folder, "settings.png"), 1);
+        Save(win, 660, 700, Path.Combine(folder, $"settings-{lang}.png"), 1);
+    }
+
+    private static void RenderFirstRunWindow(string folder, AppSettings settings, string lang)
+    {
+        // Show first-run for a fresh account (Cid = 0 triggers the wizard in real usage).
+        var fresh = new AppSettings { RealName = "", HomeAirport = "", Cid = 0 };
+        var win = new FirstRunWindow(fresh);
+        Save(win, 480, 640, Path.Combine(folder, $"first-run-{lang}.png"), 1);
     }
 
     // -----------------------------------------------------------------------
@@ -98,7 +121,7 @@ internal static class PreviewRenderer
         win.ShowInTaskbar = false;
         win.AllowsTransparency = false;
 
-        // Show the window off-screen so WPF materializes all templates, then move it off-screen.
+        // Show the window off-screen so WPF materializes all templates.
         win.Left = -9999;
         win.Top = -9999;
         win.Show();
