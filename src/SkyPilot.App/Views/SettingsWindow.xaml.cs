@@ -19,6 +19,9 @@ public partial class SettingsWindow : Window
     private PttBinding _ptt;
     private CancellationTokenSource? _capture;
 
+    internal SettingsWindow(AppSettings settings)
+        : this(settings, new PlainTextProtector(), () => 0f) { }
+
     public SettingsWindow(AppSettings settings, ISecretProtector protector, Func<float> micLevel)
     {
         InitializeComponent();

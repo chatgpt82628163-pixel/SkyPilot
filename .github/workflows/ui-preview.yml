@@ -1,0 +1,24 @@
+name: UI Preview
+on:
+  push:
+    branches: ['claude/**']
+  workflow_dispatch:
+jobs:
+  render:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Build
+        run: dotnet build src/SkyPilot.App -c Release
+      - name: Render previews
+        run: |
+          $exe = Get-ChildItem -Recurse -Filter SkyPilot.exe | Select-Object -First 1 -ExpandProperty FullName
+          & $exe --render-previews previews
+        shell: pwsh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ui-previews
+          path: previews/

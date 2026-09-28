@@ -1,7 +1,6 @@
 <Application x:Class="SkyPilot.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="Views/MainWindow.xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Application.Resources>
     <!-- SkyNetwork colours (as on the website's dark theme): deep navy, the logo's blues, green and red for states. -->
     <SolidColorBrush x:Key="Bg" Color="#050B17"/>

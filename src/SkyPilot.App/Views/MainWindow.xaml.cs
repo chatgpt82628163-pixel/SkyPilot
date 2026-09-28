@@ -52,6 +52,19 @@ public partial class MainWindow : Window
     private ConnectInfo? _connectInfo;
     private OwnAircraftData? _own;
 
+    /// <summary>Preview-only constructor: sets the DataContext to a pre-built ViewModel without connecting to any service.</summary>
+    internal MainWindow(MainViewModel previewVm)
+    {
+        InitializeComponent();
+        DataContext = previewVm;
+        _settings = new AppSettings();
+        var hub = new SimulatorHub([]);
+        _sim = hub;
+        _msfsMatcher = new ModelMatcher();
+        _session = new NetworkSession(hub, _msfsMatcher);
+        _commands = new CommandProcessor(_session, hub);
+    }
+
     public MainWindow()
     {
         InitializeComponent();
