@@ -21,10 +21,11 @@ jobs:
           $exe = Get-ChildItem -Recurse -Filter SkyPilot.exe | Select-Object -First 1 -ExpandProperty FullName
           Write-Host "Exe: $exe"
           Write-Host "Output: $out"
-          & $exe --render-previews $out
-          $code = $LASTEXITCODE
+          # Use Start-Process -Wait so PowerShell waits for the WPF (WinExe) app to exit.
+          $proc = Start-Process -FilePath $exe -ArgumentList "--render-previews", $out -Wait -PassThru -WindowStyle Minimized
+          $code = $proc.ExitCode
           Write-Host "Exit code: $code"
-          Get-ChildItem $out -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
+          Get-ChildItem $out -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  PNG: $_" }
           if ($code -ne 0) { exit $code }
       - uses: actions/upload-artifact@v4
         if: always()
