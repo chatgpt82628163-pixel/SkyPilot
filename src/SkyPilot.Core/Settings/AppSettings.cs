@@ -17,8 +17,8 @@ public sealed class PlainTextProtector : ISecretProtector
 
 public sealed class ServerEntry
 {
-    public string Name { get; set; } = "SKYNET";
-    public string Host { get; set; } = "127.0.0.1";
+    public string Name { get; set; } = "SkyNetwork";
+    public string Host { get; set; } = "sky.network.npzy2.us";
     public int Port { get; set; } = 6809;
     public override string ToString() => $"{Name} ({Host}:{Port})";
 }
@@ -29,12 +29,12 @@ public sealed class AppSettings
     public string ProtectedPassword { get; set; } = "";
     public string RealName { get; set; } = "";
     public string HomeAirport { get; set; } = "";
-    /// <summary>SkyNetwork website, where flight plans are filed.</summary>
-    public string Website { get; set; } = "http://127.0.0.1:8000/";
+    /// <summary>Website, where flight plans are filed.</summary>
+    public string Website { get; set; } = "https://sky.network.npzy2.us/";
     /// <summary>SimBrief username or numeric Pilot ID: SIMBRIEF loads the latest plan made there.</summary>
     public string SimbriefUser { get; set; } = "";
     public List<ServerEntry> Servers { get; set; } = [new ServerEntry()];
-    public string SelectedServer { get; set; } = "SKYNET";
+    public string SelectedServer { get; set; } = "SkyNetwork";
     public string LastCallsign { get; set; } = "";
     public string LastTypeCode { get; set; } = "";
     public bool PlaySoundOnPrivateMessage { get; set; } = true;
@@ -65,6 +65,9 @@ public sealed class AppSettings
     /// <summary>MSFS Community folder with FSLTL. Empty: found automatically from UserCfg.opt.</summary>
     public string CommunityFolder { get; set; } = "";
 
+    /// <summary>UI language: "ru" or "en"; empty = follow Windows.</summary>
+    public string Language { get; set; } = "";
+
     private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
 
     public static string DefaultDirectory =>
@@ -72,16 +75,37 @@ public sealed class AppSettings
 
     public static AppSettings Load(string path)
     {
+        AppSettings settings;
         try
         {
-            if (File.Exists(path))
-                return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(path), Options) ?? new AppSettings();
+            settings = File.Exists(path)
+                ? JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(path), Options) ?? new AppSettings()
+                : new AppSettings();
         }
         catch (JsonException)
         {
             // Corrupt file: start from defaults rather than refusing to start.
+            settings = new AppSettings();
         }
-        return new AppSettings();
+        Migrate(settings);
+        return settings;
+    }
+
+    internal static void Migrate(AppSettings settings)
+    {
+        foreach (var s in settings.Servers)
+        {
+            if (s.Host is "127.0.0.1" or "localhost")
+            {
+                s.Name = "SkyNetwork";
+                s.Host = "sky.network.npzy2.us";
+                s.Port = 6809;
+            }
+        }
+        if (settings.Website is "http://127.0.0.1:8000/" or "http://localhost:8000/")
+            settings.Website = "https://sky.network.npzy2.us/";
+        if (settings.SelectedServer is "SKYNET")
+            settings.SelectedServer = "SkyNetwork";
     }
 
     public void Save(string path)
