@@ -7,7 +7,7 @@ using SkyPilot.Core.Web;
 namespace SkyPilot.App.Views;
 
 /// <summary>
-/// Updates, like vPilot: at start a newer release on GitHub is offered; on yes its installer is downloaded, checked,
+/// Updates, like vPilot: at start a newer release on sky.network is offered; on yes its installer is downloaded, checked,
 /// and run silently, SkyPilot closes, and the installer starts the new version.
 /// </summary>
 public partial class MainWindow
