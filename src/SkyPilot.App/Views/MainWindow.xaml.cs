@@ -30,14 +30,14 @@ public partial class MainWindow : Window
     private readonly DpapiProtector _protector = new();
     private readonly AppSettings _settings;
     private readonly MainViewModel _vm = new();
-    private readonly XPlaneSimulator _xplane = new();
+    private readonly XPlaneSimulator? _xplane;
     private readonly SimulatorHub _sim;
     private readonly ModelMatcher _msfsMatcher;
     private ModelMatcher? _p3dMatcher;
     private bool _fsltlReported;
     private readonly NetworkSession _session;
     private readonly CommandProcessor _commands;
-    private readonly PilotVoice _voice = new();
+    private readonly PilotVoice? _voice;
     private readonly DispatcherTimer _simRetry = new() { Interval = TimeSpan.FromSeconds(3) };
     private readonly DispatcherTimer _clock = new() { Interval = TimeSpan.FromSeconds(1) };
     private readonly List<string> _history = [];
@@ -72,6 +72,9 @@ public partial class MainWindow : Window
         _settings = AppSettings.Load(_settingsPath);
         _vm.Topmost = _settings.KeepWindowOnTop;
 
+        _xplane = new XPlaneSimulator();
+        _voice = new PilotVoice();
+
         _sim = new SimulatorHub(
         [
             (SimulatorKind.XPlane, _xplane),
@@ -85,7 +88,7 @@ public partial class MainWindow : Window
         _commands = new CommandProcessor(_session, _sim);
 
         _sim.ConnectionChanged += (_, connected) => Ui(() => OnSimConnectionChanged(connected));
-        _xplane.PluginLog += (_, text) => Ui(() => Info("X-Plane plugin: " + text));
+        _xplane!.PluginLog += (_, text) => Ui(() => Info("X-Plane plugin: " + text));
         _sim.OwnAircraftUpdated += (_, own) => Ui(() => OnOwnAircraft(own));
         _session.ConnectionChanged += (_, connected) => Ui(() => OnNetworkConnectionChanged(connected));
         _session.MessageReceived += (_, m) => Ui(() => OnMessage(m));
@@ -93,7 +96,7 @@ public partial class MainWindow : Window
         _session.AtisReceived += (_, _) => Ui(UpdateControllers);
         _session.TrafficChanged += (_, _) => Ui(() => _vm.TrafficCount = _session.Traffic.Count);
 
-        _voice.ApplySettings(_settings);
+        _voice!.ApplySettings(_settings);
         _voice.Changed += (_, _) => Ui(UpdateVoiceStatus);
         _voice.Info += (_, text) => Ui(() => Info(text));
         _voice.Error += (_, text) => Ui(() => Error(text));
@@ -122,7 +125,7 @@ public partial class MainWindow : Window
         {
             _settings.KeepWindowOnTop = _vm.Topmost;
             _settings.Save(_settingsPath);
-            _voice.Dispose();
+            _voice?.Dispose();
             // Send the logoff packet before the process exits (the core never resumes on the UI thread).
             _session.DisposeAsync().AsTask().Wait(TimeSpan.FromSeconds(2));
             _sim.Dispose();
@@ -189,9 +192,9 @@ public partial class MainWindow : Window
         _sentPlan = null;
         // Voice follows the network connection; its failures are only reported, never disconnect FSD.
         if (connected && _connectInfo is { } info)
-            _voice.Start(new VoiceLogin(info.Host, _settings.VoicePort, info.Cid, _session.Callsign, info.Password));
+            _voice?.Start(new VoiceLogin(info.Host, _settings.VoicePort, info.Cid, _session.Callsign, info.Password));
         else
-            _voice.Stop();
+            _voice?.Stop();
         if (connected) await RefreshFlightPlanAsync(quiet: true);
     }
 
@@ -200,7 +203,7 @@ public partial class MainWindow : Window
         _own = own;
         _vm.UpdateRadios(own);
         UpdateVoiceRadios();
-        _voice.UpdatePosition(own.State);
+        _voice?.UpdatePosition(own.State);
     }
 
     private void OnMessage(ChatMessage m)
@@ -482,10 +485,11 @@ public partial class MainWindow : Window
     // ---- voice -----------------------------------------------------------------------------------
 
     private void UpdateVoiceRadios() =>
-        _voice.UpdateRadios(_own?.Com1Khz ?? 0, _own?.Com2Khz ?? 0, _vm.Com1Rx, _vm.Com2Rx, _vm.TxRadio);
+        _voice?.UpdateRadios(_own?.Com1Khz ?? 0, _own?.Com2Khz ?? 0, _vm.Com1Rx, _vm.Com2Rx, _vm.TxRadio);
 
     private void UpdateVoiceStatus()
     {
+        if (_voice == null) return;
         _vm.VoiceState = _voice.State;
         _vm.VoiceFailing = _voice.Failing;
         _vm.Transmitting = _voice.Transmitting;
@@ -494,25 +498,25 @@ public partial class MainWindow : Window
 
     private void OnVoiceClick(object sender, RoutedEventArgs e)
     {
-        if (!_voice.Reconnect())
+        if (_voice == null || !_voice.Reconnect())
             Info("Voice connects automatically when you connect to the network.");
     }
 
     private void OnPttDown(object sender, MouseButtonEventArgs e)
     {
         if (!_session.IsConnected) Error("Not connected to the network");
-        else if (_voice.State != SkyNetwork.Voice.VoiceState.Connected) Error("Voice: no connection to the voice server");
-        _voice.SetManualPtt(true);
+        else if (_voice?.State != SkyNetwork.Voice.VoiceState.Connected) Error("Voice: no connection to the voice server");
+        _voice?.SetManualPtt(true);
     }
 
-    private void OnPttUp(object sender, MouseEventArgs e) => _voice.SetManualPtt(false);
+    private void OnPttUp(object sender, MouseEventArgs e) => _voice?.SetManualPtt(false);
 
     // ---- settings -----------------------------------------------------------------------------
 
     private void OnSettingsClick(object sender, RoutedEventArgs e)
     {
         _settings.KeepWindowOnTop = _vm.Topmost;
-        var dialog = new SettingsWindow(_settings, _protector, () => _voice.MicLevel) { Owner = this };
+        var dialog = new SettingsWindow(_settings, _protector, () => _voice?.MicLevel ?? 0) { Owner = this };
         if (dialog.ShowDialog() != true) return;
         if (_sim.Preferred != _settings.Simulator)
         {
@@ -523,7 +527,7 @@ public partial class MainWindow : Window
         }
         _settings.Save(_settingsPath);
         _vm.Topmost = _settings.KeepWindowOnTop;
-        _voice.ApplySettings(_settings);
+        _voice?.ApplySettings(_settings);
     }
 
     // ---- chat input ---------------------------------------------------------------------------
