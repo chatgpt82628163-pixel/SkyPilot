@@ -144,7 +144,7 @@
         <!-- Input area -->
         <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
           <DockPanel>
-            <Button DockPanel.Dock="Right" Content="{x:Static s:Strings.SendButton}" Width="66" Height="32" Margin="6,0,0,0" Click="OnSendClick"/>
+            <Button DockPanel.Dock="Right" Content="{x:Static s:Strings.SendButton}" MinWidth="66" Height="32" Padding="10,0" Margin="6,0,0,0" Click="OnSendClick"/>
             <TextBox x:Name="Input" Height="32" KeyDown="OnInputKeyDown" FontFamily="Consolas"
                      ToolTip="Text is sent on the TX frequency. Commands: .help"/>
           </DockPanel>
