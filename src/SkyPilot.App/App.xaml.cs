@@ -16,6 +16,12 @@ public partial class App : Application
         int idx = Array.IndexOf(args, "--render-previews");
         if (idx >= 0 && idx + 1 < args.Length)
         {
+            // Swallow async WPF-dispatcher errors so partial PNG output is still uploaded.
+            DispatcherUnhandledException += (_, ex) =>
+            {
+                Console.Error.WriteLine("[preview] dispatcher: " + ex.Exception.Message);
+                ex.Handled = true;
+            };
             string folder = args[idx + 1];
             try
             {
