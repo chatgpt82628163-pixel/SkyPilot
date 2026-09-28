@@ -1,6 +1,7 @@
 <Window x:Class="SkyPilot.App.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:s="clr-namespace:SkyPilot.App.Resources"
         Title="{Binding WindowTitle}" Width="1060" Height="500" MinWidth="860" MinHeight="420"
         Topmost="{Binding Topmost}" Style="{StaticResource SkyWindow}"
         KeyDown="OnWindowKeyDown">
@@ -27,8 +28,8 @@
 
       <!-- Right: always-on-top, settings -->
       <ToggleButton DockPanel.Dock="Right" Style="{StaticResource Toggle}" IsChecked="{Binding Topmost}"
-                    Width="36" Height="36" Margin="6,0,0,0" ToolTip="Always on top">
-        <TextBlock Text="⊤" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    Width="36" Height="36" Margin="6,0,0,0" ToolTip="{x:Static s:Strings.AlwaysOnTopTip}">
+        <TextBlock Text="{x:Static s:Strings.PinButton}" FontSize="10" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
       </ToggleButton>
       <Button DockPanel.Dock="Right" Width="36" Height="36" Margin="6,0,0,0"
               Click="OnSettingsClick" ToolTip="Settings (Ctrl+S)">
@@ -66,11 +67,11 @@
           </Style>
         </Button.Style>
       </Button>
-      <Button Content="SIMBRIEF" Height="36" Margin="0,0,8,0" Click="OnSimbriefClick" Style="{StaticResource AccentButton}"
+      <Button Content="{x:Static s:Strings.SimbriefButton}" Height="36" Margin="0,0,8,0" Click="OnSimbriefClick" Style="{StaticResource AccentButton}"
               ToolTip="Load your latest SimBrief flight plan and file it"/>
-      <Button Content="REFRESH"  Height="36" Margin="0,0,8,0" Click="OnRefreshFlightPlanClick"
+      <Button Content="{x:Static s:Strings.RefreshButton}" Height="36" Margin="0,0,8,0" Click="OnRefreshFlightPlanClick"
               ToolTip="Reload the filed flight plan from the website (F5)"/>
-      <ToggleButton Style="{StaticResource Toggle}" Content="ATC" Width="56" Height="36"
+      <ToggleButton Style="{StaticResource Toggle}" Content="{x:Static s:Strings.AtcToggle}" Width="56" Height="36"
                     IsChecked="{Binding AtcVisible}" ToolTip="Show/hide ATC list"/>
     </DockPanel>
 
@@ -143,7 +144,7 @@
         <!-- Input area -->
         <StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
           <DockPanel>
-            <Button DockPanel.Dock="Right" Content="SEND" Width="66" Height="32" Margin="6,0,0,0" Click="OnSendClick"/>
+            <Button DockPanel.Dock="Right" Content="{x:Static s:Strings.SendButton}" Width="66" Height="32" Margin="6,0,0,0" Click="OnSendClick"/>
             <TextBox x:Name="Input" Height="32" KeyDown="OnInputKeyDown" FontFamily="Consolas"
                      ToolTip="Text is sent on the TX frequency. Commands: .help"/>
           </DockPanel>
@@ -189,33 +190,43 @@
         </Border>
       </DockPanel>
 
-      <!-- Transponder and radios -->
-      <StackPanel Grid.Column="1">
-        <TextBlock Text="TRANSPONDER" Style="{StaticResource Caption}"/>
-        <Border Style="{StaticResource Box}" Margin="0,0,0,8">
-          <DockPanel>
-            <Button DockPanel.Dock="Right" Content="IDENT" Width="60" Click="OnIdentClick" ToolTip="Send IDENT pulse">
-              <Button.Style>
-                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding Identing}" Value="True">
-                      <Setter Property="Background" Value="{StaticResource Ok}"/>
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Button.Style>
-            </Button>
-            <ToggleButton DockPanel.Dock="Right" Style="{StaticResource Toggle}" Width="90" Margin="0,0,8,0"
-                          IsChecked="{Binding ModeC}" Content="{Binding ModeCText}" Click="OnModeCClick"
-                          ToolTip="Transponder mode: Standby / Mode C"/>
-            <TextBox x:Name="SquawkBox" Style="{StaticResource Readout}" Text="{Binding Squawk, Mode=OneWay}"
-                     MaxLength="4" KeyDown="OnSquawkKeyDown" ToolTip="Type the squawk code and press Enter"
-                     FontSize="24" FontFamily="Consolas"/>
-          </DockPanel>
-        </Border>
+      <!-- Transponder and radios — Grid layout keeps Voice+PTT pinned to the bottom -->
+      <Grid Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <!-- COM 1 and COM 2 side by side -->
-        <Grid>
+        <!-- Row 0: Transponder -->
+        <StackPanel Grid.Row="0">
+          <TextBlock Text="TRANSPONDER" Style="{StaticResource Caption}"/>
+          <Border Style="{StaticResource Box}" Margin="0,0,0,8">
+            <DockPanel>
+              <Button DockPanel.Dock="Right" Content="IDENT" Width="60" Click="OnIdentClick" ToolTip="Send IDENT pulse">
+                <Button.Style>
+                  <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding Identing}" Value="True">
+                        <Setter Property="Background" Value="{StaticResource Ok}"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Button.Style>
+              </Button>
+              <ToggleButton DockPanel.Dock="Right" Style="{StaticResource Toggle}" Width="90" Margin="0,0,8,0"
+                            IsChecked="{Binding ModeC}" Content="{Binding ModeCText}" Click="OnModeCClick"
+                            ToolTip="Transponder mode: Standby / Mode C"/>
+              <TextBox x:Name="SquawkBox" Style="{StaticResource Readout}" Text="{Binding Squawk, Mode=OneWay}"
+                       MaxLength="4" KeyDown="OnSquawkKeyDown" ToolTip="Type the squawk code and press Enter"
+                       FontSize="24" FontFamily="Consolas"/>
+            </DockPanel>
+          </Border>
+        </StackPanel>
+
+        <!-- Row 1: COM 1 and COM 2 side by side -->
+        <Grid Grid.Row="1">
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="8"/>
@@ -291,8 +302,10 @@
           </StackPanel>
         </Grid>
 
-        <!-- Voice + PTT row -->
-        <DockPanel Margin="0,8,0,0">
+        <!-- Row 2: stretches to fill remaining vertical space -->
+
+        <!-- Row 3: Voice + PTT pinned to the bottom -->
+        <DockPanel Grid.Row="3" Margin="0,8,0,0">
           <Button DockPanel.Dock="Right" Content="{Binding PttText}" Width="110" Height="36"
                   PreviewMouseLeftButtonDown="OnPttDown" PreviewMouseLeftButtonUp="OnPttUp" LostMouseCapture="OnPttUp"
                   ToolTip="Hold to talk on the TX frequency. Assign the PTT key in Settings">
@@ -326,7 +339,7 @@
             <Run Text="{Binding ControllerCount, Mode=OneWay}" Foreground="{StaticResource Fg}"/>
           </TextBlock>
         </DockPanel>
-      </StackPanel>
+      </Grid>
 
       <!-- ATC panel -->
       <DockPanel Grid.Column="2" Width="230" Margin="10,0,0,0"

@@ -132,4 +132,112 @@
   <data name="AtcToggle" xml:space="preserve">
     <value>ATC</value>
   </data>
+  <data name="NetworkCaption" xml:space="preserve">
+    <value>NETWORK</value>
+  </data>
+  <data name="FirstRunSubtitle" xml:space="preserve">
+    <value>First-time setup</value>
+  </data>
+  <data name="Step1Header" xml:space="preserve">
+    <value>STEP 1 — ACCOUNT</value>
+  </data>
+  <data name="Step2Header" xml:space="preserve">
+    <value>STEP 2 — VOICE</value>
+  </data>
+  <data name="Step3Header" xml:space="preserve">
+    <value>STEP 3 — SIMULATOR</value>
+  </data>
+  <data name="CidLabel" xml:space="preserve">
+    <value>Pilot ID (CID)</value>
+  </data>
+  <data name="PasswordLabel" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="DisplayNameLabel" xml:space="preserve">
+    <value>Display name</value>
+  </data>
+  <data name="HomeAirportLabel" xml:space="preserve">
+    <value>Home airport</value>
+  </data>
+  <data name="MicLabel" xml:space="preserve">
+    <value>Microphone</value>
+  </data>
+  <data name="SpeakersLabel" xml:space="preserve">
+    <value>Speakers</value>
+  </data>
+  <data name="PttLabel" xml:space="preserve">
+    <value>Push-to-talk key</value>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>ASSIGN</value>
+  </data>
+  <data name="SimLabel" xml:space="preserve">
+    <value>Simulator</value>
+  </data>
+  <data name="AutoDetectButton" xml:space="preserve">
+    <value>AUTO-DETECT</value>
+  </data>
+  <data name="SaveContinueButton" xml:space="preserve">
+    <value>Save and continue</value>
+  </data>
+  <data name="SectionAccount" xml:space="preserve">
+    <value>ACCOUNT</value>
+  </data>
+  <data name="SectionSimulator" xml:space="preserve">
+    <value>SIMULATOR</value>
+  </data>
+  <data name="SectionAudio" xml:space="preserve">
+    <value>AUDIO</value>
+  </data>
+  <data name="SectionRadio" xml:space="preserve">
+    <value>RADIO</value>
+  </data>
+  <data name="SectionApplication" xml:space="preserve">
+    <value>APPLICATION</value>
+  </data>
+  <data name="SimbriefUsernameLabel" xml:space="preserve">
+    <value>SimBrief username or Pilot ID</value>
+  </data>
+  <data name="P3dDllLabel" xml:space="preserve">
+    <value>Prepar3D SimConnect.dll (only if not found automatically)</value>
+  </data>
+  <data name="MicGainLabel" xml:space="preserve">
+    <value>Mic gain</value>
+  </data>
+  <data name="RxVolumeLabel" xml:space="preserve">
+    <value>RX volume</value>
+  </data>
+  <data name="RadioNoiseLabel" xml:space="preserve">
+    <value>Radio noise</value>
+  </data>
+  <data name="VoicePortLabel" xml:space="preserve">
+    <value>Voice server port (UDP)</value>
+  </data>
+  <data name="SoundLabel" xml:space="preserve">
+    <value>Sound on private message</value>
+  </data>
+  <data name="AlwaysOnTopLabel" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="UpdatesLabel" xml:space="preserve">
+    <value>Check for updates at start</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="AdvancedLabel" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ServerAddressLabel" xml:space="preserve">
+    <value>Server address</value>
+  </data>
+  <data name="WebsiteLabel" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="PinButton" xml:space="preserve">
+    <value>PIN</value>
+  </data>
+  <data name="AlwaysOnTopTip" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
 </root>

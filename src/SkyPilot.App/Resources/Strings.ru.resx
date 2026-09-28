@@ -100,13 +100,13 @@
     <value>Подключение</value>
   </data>
   <data name="CallsignLabel" xml:space="preserve">
-    <value>Позывной / Callsign</value>
+    <value>Позывной</value>
   </data>
   <data name="AircraftTypeLabel" xml:space="preserve">
-    <value>Тип ВС / Aircraft type</value>
+    <value>Тип ВС</value>
   </data>
   <data name="ServerLabel" xml:space="preserve">
-    <value>Сервер / Server</value>
+    <value>Сервер</value>
   </data>
   <data name="ConnectOkButton" xml:space="preserve">
     <value>ПОДКЛЮЧИТЬСЯ</value>
@@ -115,10 +115,10 @@
     <value>ОТМЕНА</value>
   </data>
   <data name="CallsignError" xml:space="preserve">
-    <value>Позывной: 2–12 латинских букв и цифр / Callsign: 2–12 Latin letters and digits</value>
+    <value>Позывной: 2–12 латинских букв и цифр</value>
   </data>
   <data name="TypeError" xml:space="preserve">
-    <value>Введите код ИКАО воздушного судна / Enter the ICAO aircraft type code</value>
+    <value>Введите код ИКАО воздушного судна</value>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>СОХРАНИТЬ</value>
@@ -130,6 +130,114 @@
     <value>SIMBRIEF</value>
   </data>
   <data name="AtcToggle" xml:space="preserve">
-    <value>ATC</value>
+    <value>ДСП</value>
+  </data>
+  <data name="NetworkCaption" xml:space="preserve">
+    <value>СЕТЬ</value>
+  </data>
+  <data name="FirstRunSubtitle" xml:space="preserve">
+    <value>Первоначальная настройка</value>
+  </data>
+  <data name="Step1Header" xml:space="preserve">
+    <value>ШАГ 1 — АККАУНТ</value>
+  </data>
+  <data name="Step2Header" xml:space="preserve">
+    <value>ШАГ 2 — ГОЛОС</value>
+  </data>
+  <data name="Step3Header" xml:space="preserve">
+    <value>ШАГ 3 — СИМУЛЯТОР</value>
+  </data>
+  <data name="CidLabel" xml:space="preserve">
+    <value>Pilot ID (CID)</value>
+  </data>
+  <data name="PasswordLabel" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="DisplayNameLabel" xml:space="preserve">
+    <value>Отображаемое имя</value>
+  </data>
+  <data name="HomeAirportLabel" xml:space="preserve">
+    <value>Домашний аэропорт</value>
+  </data>
+  <data name="MicLabel" xml:space="preserve">
+    <value>Микрофон</value>
+  </data>
+  <data name="SpeakersLabel" xml:space="preserve">
+    <value>Динамики</value>
+  </data>
+  <data name="PttLabel" xml:space="preserve">
+    <value>Кнопка передачи (PTT)</value>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>НАЗНАЧИТЬ</value>
+  </data>
+  <data name="SimLabel" xml:space="preserve">
+    <value>Симулятор</value>
+  </data>
+  <data name="AutoDetectButton" xml:space="preserve">
+    <value>ОПРЕДЕЛИТЬ</value>
+  </data>
+  <data name="SaveContinueButton" xml:space="preserve">
+    <value>Сохранить и продолжить</value>
+  </data>
+  <data name="SectionAccount" xml:space="preserve">
+    <value>АККАУНТ</value>
+  </data>
+  <data name="SectionSimulator" xml:space="preserve">
+    <value>СИМУЛЯТОР</value>
+  </data>
+  <data name="SectionAudio" xml:space="preserve">
+    <value>ЗВУК</value>
+  </data>
+  <data name="SectionRadio" xml:space="preserve">
+    <value>РАДИО</value>
+  </data>
+  <data name="SectionApplication" xml:space="preserve">
+    <value>ПРОГРАММА</value>
+  </data>
+  <data name="SimbriefUsernameLabel" xml:space="preserve">
+    <value>Имя пользователя SimBrief или Pilot ID</value>
+  </data>
+  <data name="P3dDllLabel" xml:space="preserve">
+    <value>SimConnect.dll для Prepar3D (если не найден автоматически)</value>
+  </data>
+  <data name="MicGainLabel" xml:space="preserve">
+    <value>Усиление микрофона</value>
+  </data>
+  <data name="RxVolumeLabel" xml:space="preserve">
+    <value>Громкость приёма</value>
+  </data>
+  <data name="RadioNoiseLabel" xml:space="preserve">
+    <value>Шум радиосвязи</value>
+  </data>
+  <data name="VoicePortLabel" xml:space="preserve">
+    <value>Порт голосового сервера (UDP)</value>
+  </data>
+  <data name="SoundLabel" xml:space="preserve">
+    <value>Звук при личном сообщении</value>
+  </data>
+  <data name="AlwaysOnTopLabel" xml:space="preserve">
+    <value>Поверх всех окон</value>
+  </data>
+  <data name="UpdatesLabel" xml:space="preserve">
+    <value>Проверять обновления при запуске</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="AdvancedLabel" xml:space="preserve">
+    <value>Дополнительно</value>
+  </data>
+  <data name="ServerAddressLabel" xml:space="preserve">
+    <value>Адрес сервера</value>
+  </data>
+  <data name="WebsiteLabel" xml:space="preserve">
+    <value>Сайт</value>
+  </data>
+  <data name="PinButton" xml:space="preserve">
+    <value>PIN</value>
+  </data>
+  <data name="AlwaysOnTopTip" xml:space="preserve">
+    <value>Поверх всех окон</value>
   </data>
 </root>

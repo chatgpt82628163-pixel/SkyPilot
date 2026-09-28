@@ -1,13 +1,14 @@
 <Window x:Class="SkyPilot.App.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Settings" Width="660" SizeToContent="Height" ResizeMode="NoResize"
+        xmlns:s="clr-namespace:SkyPilot.App.Resources"
+        Title="{x:Static s:Strings.SettingsTitle}" Width="660" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner" Style="{StaticResource SkyWindow}">
   <ScrollViewer VerticalScrollBarVisibility="Auto">
     <StackPanel Margin="20">
 
       <!-- ── ACCOUNT ──────────────────────────────────────────── -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="ACCOUNT"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.SectionAccount}"/>
       <Separator/>
 
       <Grid Margin="0,8,0,0">
@@ -21,15 +22,15 @@
             <TextBlock DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="0,0,0,3">
               <Hyperlink x:Name="RegisterLink" NavigateUri="https://sky.network.npzy2.us/register"
                          RequestNavigate="OnRegisterLinkClick">
-                <TextBlock Text="No account? Register" Foreground="{StaticResource Accent}" FontSize="11"/>
+                <TextBlock Text="{x:Static s:Strings.RegisterLink}" Foreground="{StaticResource Accent}" FontSize="11"/>
               </Hyperlink>
             </TextBlock>
-            <Label Content="Pilot ID (CID)"/>
+            <Label Content="{x:Static s:Strings.CidLabel}"/>
           </DockPanel>
           <TextBox x:Name="CidBox"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
-          <Label Content="Password"/>
+          <Label Content="{x:Static s:Strings.PasswordLabel}"/>
           <PasswordBox x:Name="PasswordBox"/>
         </StackPanel>
       </Grid>
@@ -41,17 +42,17 @@
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <Label Content="Display name"/>
+          <Label Content="{x:Static s:Strings.DisplayNameLabel}"/>
           <TextBox x:Name="NameBox" ToolTip="The name controllers see"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
-          <Label Content="Home airport"/>
+          <Label Content="{x:Static s:Strings.HomeAirportLabel}"/>
           <TextBox x:Name="HomeBox" MaxLength="4" ToolTip="ICAO code, e.g. UWWW"/>
         </StackPanel>
       </Grid>
 
       <!-- ── SIMULATOR ────────────────────────────────────────── -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="SIMULATOR"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.SectionSimulator}"/>
       <Separator/>
       <Grid Margin="0,8,0,0">
         <Grid.ColumnDefinitions>
@@ -60,23 +61,23 @@
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <Label Content="Simulator"/>
+          <Label Content="{x:Static s:Strings.SimLabel}"/>
           <ComboBox x:Name="SimulatorBox" DisplayMemberPath="Title" SelectedValuePath="Id"
                     ToolTip="Automatic finds the simulator that is running"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
-          <Label Content="SimBrief username or Pilot ID"/>
+          <Label Content="{x:Static s:Strings.SimbriefUsernameLabel}"/>
           <TextBox x:Name="SimbriefBox" ToolTip="Used by the SIMBRIEF button"/>
         </StackPanel>
       </Grid>
-      <Label Content="Prepar3D SimConnect.dll (only if not found automatically)"/>
+      <Label Content="{x:Static s:Strings.P3dDllLabel}"/>
       <DockPanel>
         <Button DockPanel.Dock="Right" Content="…" Padding="10,4" Margin="6,0,0,0" Click="OnBrowseP3dClick"/>
         <TextBox x:Name="P3dDllBox"/>
       </DockPanel>
 
       <!-- ── AUDIO ────────────────────────────────────────────── -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="AUDIO"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.SectionAudio}"/>
       <Separator/>
       <Grid Margin="0,8,0,0">
         <Grid.ColumnDefinitions>
@@ -85,12 +86,12 @@
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <Label Content="Microphone"/>
+          <Label Content="{x:Static s:Strings.MicLabel}"/>
           <ComboBox x:Name="InputBox"/>
           <DockPanel Margin="0,6,0,0">
             <TextBlock x:Name="MicGainText" DockPanel.Dock="Right" VerticalAlignment="Center"
                        Foreground="{StaticResource Muted}" FontSize="11"/>
-            <Label Content="Mic gain" Padding="0,0,0,0"/>
+            <Label Content="{x:Static s:Strings.MicGainLabel}" Padding="0,0,0,0"/>
           </DockPanel>
           <Slider x:Name="MicGainSlider" Minimum="0" Maximum="300" SmallChange="5" LargeChange="25"
                   IsMoveToPointEnabled="True" ValueChanged="OnSliderChanged" Margin="0,2,0,0"/>
@@ -99,60 +100,60 @@
                        ToolTip="Microphone level"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
-          <Label Content="Speakers"/>
+          <Label Content="{x:Static s:Strings.SpeakersLabel}"/>
           <ComboBox x:Name="OutputBox"/>
           <DockPanel Margin="0,6,0,0">
             <TextBlock x:Name="VolumeText" DockPanel.Dock="Right" VerticalAlignment="Center"
                        Foreground="{StaticResource Muted}" FontSize="11"/>
-            <Label Content="RX volume" Padding="0,0,0,0"/>
+            <Label Content="{x:Static s:Strings.RxVolumeLabel}" Padding="0,0,0,0"/>
           </DockPanel>
           <Slider x:Name="VolumeSlider" Minimum="0" Maximum="100" SmallChange="5" LargeChange="10"
                   IsMoveToPointEnabled="True" ValueChanged="OnSliderChanged" Margin="0,2,0,0"/>
         </StackPanel>
       </Grid>
-      <CheckBox x:Name="RadioNoiseBox" Content="Radio noise" Margin="0,10,0,0"/>
+      <CheckBox x:Name="RadioNoiseBox" Content="{x:Static s:Strings.RadioNoiseLabel}" Margin="0,10,0,0"/>
 
       <!-- ── RADIO / PTT ───────────────────────────────────────── -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="RADIO"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.SectionRadio}"/>
       <Separator/>
-      <Label Content="Push-to-talk key"/>
+      <Label Content="{x:Static s:Strings.PttLabel}"/>
       <DockPanel>
-        <Button x:Name="PttCaptureButton" DockPanel.Dock="Right" Content="ASSIGN" Width="90" Margin="8,0,0,0"
+        <Button x:Name="PttCaptureButton" DockPanel.Dock="Right" Content="{x:Static s:Strings.AssignButton}" Width="90" Margin="8,0,0,0"
                 Click="OnPttCaptureClick" ToolTip="Click, then press a key or joystick button"/>
         <Button DockPanel.Dock="Right" Content="✕" Margin="6,0,0,0" Click="OnPttClearClick" ToolTip="Clear"/>
         <TextBox x:Name="PttBox" IsReadOnly="True" Focusable="False"/>
       </DockPanel>
-      <Label Content="Voice server port (UDP)"/>
+      <Label Content="{x:Static s:Strings.VoicePortLabel}"/>
       <TextBox x:Name="VoicePortBox" Width="100" HorizontalAlignment="Left" ToolTip="Default 3782"/>
 
       <!-- ── APPLICATION ──────────────────────────────────────── -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="APPLICATION"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.SectionApplication}"/>
       <Separator/>
       <StackPanel Margin="0,10,0,0">
-        <CheckBox x:Name="SoundBox"   Content="Sound on private message"  Margin="0,0,0,8"/>
-        <CheckBox x:Name="TopmostBox" Content="Always on top"             Margin="0,0,0,8"/>
-        <CheckBox x:Name="UpdatesBox" Content="Check for updates at start"/>
+        <CheckBox x:Name="SoundBox"   Content="{x:Static s:Strings.SoundLabel}"    Margin="0,0,0,8"/>
+        <CheckBox x:Name="TopmostBox" Content="{x:Static s:Strings.AlwaysOnTopLabel}" Margin="0,0,0,8"/>
+        <CheckBox x:Name="UpdatesBox" Content="{x:Static s:Strings.UpdatesLabel}"/>
       </StackPanel>
 
-      <Label Content="Language"/>
+      <Label Content="{x:Static s:Strings.LanguageLabel}"/>
       <ComboBox x:Name="LanguageBox" Width="160" HorizontalAlignment="Left"
                 ToolTip="Restart the app to apply a language change"/>
 
       <!-- ── ADVANCED (server/website, collapsed by default) ─── -->
-      <Expander Header="Advanced" Margin="0,14,0,0"
+      <Expander Header="{x:Static s:Strings.AdvancedLabel}" Margin="0,14,0,0"
                 Foreground="{StaticResource Muted}" BorderBrush="{StaticResource Border}">
         <StackPanel Margin="0,8,0,0">
-          <Label Content="Server address"/>
+          <Label Content="{x:Static s:Strings.ServerAddressLabel}"/>
           <TextBox x:Name="ServerBox" ToolTip="host:port, e.g. sky.network.npzy2.us:6809"/>
-          <Label Content="Website"/>
+          <Label Content="{x:Static s:Strings.WebsiteLabel}"/>
           <TextBox x:Name="WebsiteBox" ToolTip="Where flight plans are filed"/>
         </StackPanel>
       </Expander>
 
       <TextBlock x:Name="ErrorText" Foreground="{StaticResource Bad}" TextWrapping="Wrap" Margin="0,10,0,0"/>
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,4">
-        <Button Content="Save" IsDefault="True" Click="OnOk" Style="{StaticResource GreenButton}" Padding="22,8" Margin="0,0,8,0"/>
-        <Button Content="Cancel" IsCancel="True" Padding="14,8"/>
+        <Button Content="{x:Static s:Strings.SaveButton}" IsDefault="True" Click="OnOk" Style="{StaticResource GreenButton}" Padding="22,8" Margin="0,0,8,0"/>
+        <Button Content="{x:Static s:Strings.CancelButton}" IsCancel="True" Padding="14,8"/>
       </StackPanel>
     </StackPanel>
   </ScrollViewer>

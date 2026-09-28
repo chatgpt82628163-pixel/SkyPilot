@@ -1,6 +1,7 @@
 <Window x:Class="SkyPilot.App.Views.FirstRunWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:s="clr-namespace:SkyPilot.App.Resources"
         Title="SkyPilot — Setup" Width="480" SizeToContent="Height" ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen" Style="{StaticResource SkyWindow}">
   <Grid Margin="28,24">
@@ -16,14 +17,14 @@
         <TextBlock FontSize="18" FontWeight="Bold">
           <Run Text="SKY"/><Run Text="PILOT" Foreground="{StaticResource Accent}"/>
         </TextBlock>
-        <TextBlock Text="First-time setup" Foreground="{StaticResource Muted}" FontSize="12"/>
+        <TextBlock Text="{x:Static s:Strings.FirstRunSubtitle}" Foreground="{StaticResource Muted}" FontSize="12"/>
       </StackPanel>
     </StackPanel>
 
     <StackPanel Grid.Row="1">
 
       <!-- Step 1: Account -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="STEP 1 — ACCOUNT"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.Step1Header}"/>
       <Separator/>
       <Grid Margin="0,8,0,0">
         <Grid.ColumnDefinitions>
@@ -36,15 +37,15 @@
             <TextBlock DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="0,0,0,3">
               <Hyperlink x:Name="RegisterLink" NavigateUri="https://sky.network.npzy2.us/register"
                          RequestNavigate="OnRegisterLinkClick">
-                <TextBlock Text="No account? Register" Foreground="{StaticResource Accent}" FontSize="11"/>
+                <TextBlock Text="{x:Static s:Strings.RegisterLink}" Foreground="{StaticResource Accent}" FontSize="11"/>
               </Hyperlink>
             </TextBlock>
-            <Label Content="Pilot ID (CID)" Padding="0,10,0,4"/>
+            <Label Content="{x:Static s:Strings.CidLabel}" Padding="0,10,0,4"/>
           </DockPanel>
           <TextBox x:Name="CidBox"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
-          <Label Content="Password"/>
+          <Label Content="{x:Static s:Strings.PasswordLabel}"/>
           <PasswordBox x:Name="PasswordBox"/>
         </StackPanel>
       </Grid>
@@ -55,17 +56,17 @@
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <Label Content="Display name"/>
+          <Label Content="{x:Static s:Strings.DisplayNameLabel}"/>
           <TextBox x:Name="NameBox" ToolTip="The name controllers see"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
-          <Label Content="Home airport"/>
+          <Label Content="{x:Static s:Strings.HomeAirportLabel}"/>
           <TextBox x:Name="HomeBox" MaxLength="4" ToolTip="ICAO code, e.g. UWWW"/>
         </StackPanel>
       </Grid>
 
       <!-- Step 2: Voice -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="STEP 2 — VOICE"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.Step2Header}"/>
       <Separator/>
       <Grid Margin="0,8,0,0">
         <Grid.ColumnDefinitions>
@@ -74,24 +75,24 @@
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <Label Content="Microphone"/>
+          <Label Content="{x:Static s:Strings.MicLabel}"/>
           <ComboBox x:Name="InputBox"/>
         </StackPanel>
         <StackPanel Grid.Column="2">
-          <Label Content="Speakers"/>
+          <Label Content="{x:Static s:Strings.SpeakersLabel}"/>
           <ComboBox x:Name="OutputBox"/>
         </StackPanel>
       </Grid>
-      <Label Content="Push-to-talk key"/>
+      <Label Content="{x:Static s:Strings.PttLabel}"/>
       <DockPanel>
-        <Button x:Name="PttCaptureButton" DockPanel.Dock="Right" Content="ASSIGN" Width="90" Margin="8,0,0,0"
+        <Button x:Name="PttCaptureButton" DockPanel.Dock="Right" Content="{x:Static s:Strings.AssignButton}" Width="90" Margin="8,0,0,0"
                 Click="OnPttCaptureClick" ToolTip="Click, then press a key or joystick button"/>
         <Button DockPanel.Dock="Right" Content="✕" Margin="6,0,0,0" Click="OnPttClearClick" ToolTip="Clear"/>
         <TextBox x:Name="PttBox" IsReadOnly="True" Focusable="False"/>
       </DockPanel>
 
       <!-- Step 3: Simulator -->
-      <TextBlock Style="{StaticResource SectionHead}" Text="STEP 3 — SIMULATOR"/>
+      <TextBlock Style="{StaticResource SectionHead}" Text="{x:Static s:Strings.Step3Header}"/>
       <Separator/>
       <Grid Margin="0,8,0,0">
         <Grid.ColumnDefinitions>
@@ -100,12 +101,12 @@
           <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel>
-          <Label Content="Simulator"/>
+          <Label Content="{x:Static s:Strings.SimLabel}"/>
           <ComboBox x:Name="SimulatorBox" DisplayMemberPath="Title" SelectedValuePath="Id"
                     ToolTip="Automatic finds the simulator that is running"/>
         </StackPanel>
         <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
-          <Button Content="AUTO-DETECT" Height="34" Click="OnDetectSimClick"
+          <Button Content="{x:Static s:Strings.AutoDetectButton}" Height="34" Click="OnDetectSimClick"
                   ToolTip="Try to find the simulator that is currently running"/>
           <TextBlock x:Name="SimDetectText" Foreground="{StaticResource Accent}" FontSize="11"
                      Margin="0,4,0,0" TextWrapping="Wrap"/>
@@ -115,7 +116,7 @@
       <!-- Errors + button -->
       <TextBlock x:Name="ErrorText" Foreground="{StaticResource Bad}" TextWrapping="Wrap" Margin="0,12,0,0"/>
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
-        <Button Content="Save and continue" IsDefault="True" Click="OnSave"
+        <Button Content="{x:Static s:Strings.SaveContinueButton}" IsDefault="True" Click="OnSave"
                 Style="{StaticResource GreenButton}" Padding="22,9"/>
       </StackPanel>
     </StackPanel>

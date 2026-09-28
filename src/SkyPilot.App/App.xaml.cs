@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using SkyPilot.App.Services;
@@ -12,6 +14,11 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // Apply language preference as early as possible.
+        var settingsPathEarly = Path.Combine(AppSettings.DefaultDirectory, "settings.json");
+        var settingsForLang = AppSettings.Load(settingsPathEarly);
+        ApplyLanguage(settingsForLang.Language);
 
         // --render-previews <folder>: render each window to PNG and exit without touching user data.
         var args = e.Args;
@@ -66,5 +73,19 @@ public partial class App : Application
     {
         MessageBox.Show(e.Exception.Message, "SkyPilot", MessageBoxButton.OK, MessageBoxImage.Error);
         e.Handled = true;
+    }
+
+    internal static void ApplyLanguage(string lang)
+    {
+        if (string.IsNullOrEmpty(lang)) return;
+        try
+        {
+            var ci = new CultureInfo(lang);
+            Thread.CurrentThread.CurrentCulture   = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+            CultureInfo.DefaultThreadCurrentCulture   = ci;
+            CultureInfo.DefaultThreadCurrentUICulture = ci;
+        }
+        catch (CultureNotFoundException) { }
     }
 }

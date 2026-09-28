@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -29,17 +31,29 @@ internal static class PreviewRenderer
             LastTypeCode = "A20N",
         };
 
-        // English previews (default)
+        // English previews
+        SetCulture("en");
         TryRender(() => RenderMainWindow(outputFolder, settings, "en"),     "main-window-en");
         TryRender(() => RenderConnectWindow(outputFolder, settings, "en"),  "connect-dialog-en");
         TryRender(() => RenderSettingsWindow(outputFolder, settings, "en"), "settings-en");
         TryRender(() => RenderFirstRunWindow(outputFolder, settings, "en"), "first-run-en");
 
         // Russian previews
+        SetCulture("ru");
         TryRender(() => RenderMainWindow(outputFolder, settings, "ru"),     "main-window-ru");
         TryRender(() => RenderConnectWindow(outputFolder, settings, "ru"),  "connect-dialog-ru");
         TryRender(() => RenderSettingsWindow(outputFolder, settings, "ru"), "settings-ru");
         TryRender(() => RenderFirstRunWindow(outputFolder, settings, "ru"), "first-run-ru");
+        SetCulture("en");
+    }
+
+    private static void SetCulture(string lang)
+    {
+        var ci = new CultureInfo(lang);
+        Thread.CurrentThread.CurrentCulture   = ci;
+        Thread.CurrentThread.CurrentUICulture = ci;
+        CultureInfo.DefaultThreadCurrentCulture   = ci;
+        CultureInfo.DefaultThreadCurrentUICulture = ci;
     }
 
     private static void TryRender(Action action, string name)
@@ -95,7 +109,7 @@ internal static class PreviewRenderer
     private static void RenderConnectWindow(string folder, AppSettings settings, string lang)
     {
         var win = new ConnectWindow(settings);
-        Save(win, 380, 280, Path.Combine(folder, $"connect-dialog-{lang}.png"), 1);
+        Save(win, 380, 310, Path.Combine(folder, $"connect-dialog-{lang}.png"), 1);
     }
 
     private static void RenderSettingsWindow(string folder, AppSettings settings, string lang)

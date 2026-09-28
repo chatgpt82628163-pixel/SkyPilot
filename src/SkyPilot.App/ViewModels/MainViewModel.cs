@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using SkyNetwork.Voice;
+using SkyPilot.App.Resources;
 using SkyPilot.Core.Model;
 using SkyPilot.Core.Session;
 
@@ -83,19 +84,21 @@ public sealed class MainViewModel : Observable
         : SimError != null ? "Simulator not reachable"
         : "Waiting for the simulator…";
 
-    public string ConnectButtonText => NetConnecting ? "CONNECTING…"
-        : NetConnected ? "DISCONNECT" : "CONNECT";
+    public string ConnectButtonText => NetConnecting ? Strings.ConnectingButton
+        : NetConnected ? Strings.DisconnectButton : Strings.ConnectButton;
 
     /// <summary>Status bar: network state.</summary>
-    public string NetStatusText => NetConnected ? $"● {Callsign} (SkyNetwork)"
-        : NetConnecting ? "● Connecting…"
-        : "● Disconnected";
+    public string NetStatusText => NetConnected ? $"● {string.Format(Strings.StatusConnected, Callsign)}"
+        : NetConnecting ? $"● {Strings.StatusConnecting}"
+        : $"● {Strings.StatusDisconnected}";
 
     /// <summary>Status bar: simulator state.</summary>
-    public string SimStatusText => SimConnected ? $"✈ {SimName}" : "✈ Sim: waiting";
+    public string SimStatusText => SimConnected
+        ? $"✈ {string.Format(Strings.SimConnected, SimName)}"
+        : $"✈ {Strings.SimWaiting}";
 
     /// <summary>Status bar: PTT state.</summary>
-    public string PttStatusText => PttKey.Length > 0 ? $"🎙 {PttKey}" : "🎙 PTT: not assigned";
+    public string PttStatusText => PttKey.Length > 0 ? $"🎙 {PttKey}" : $"🎙 {Strings.PttNotAssigned}";
 
     public string WindowTitle => NetConnected ? $"SkyPilot — {Callsign}" : "SkyPilot";
 
@@ -236,7 +239,7 @@ public sealed class MainViewModel : Observable
 
     public string FlightPlanText => FlightPlan is { } p
         ? $"{p.Departure} → {p.Destination}   {p.AircraftType}   {p.CruiseAltitude}"
-        : "No flight plan";
+        : Strings.FlightPlanNone;
 
     // ---- misc ----------------------------------------------------------------------------
 
