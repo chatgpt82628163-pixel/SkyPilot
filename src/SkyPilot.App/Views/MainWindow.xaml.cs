@@ -54,7 +54,8 @@ public partial class MainWindow : Window
     private ConnectInfo? _connectInfo;
     private OwnAircraftData? _own;
     private PositionsClient? _positionsClient;
-    private string? _nearestAirport;
+    // Set when the aircraft is near a known airport; used for the Nearest charts menu item.
+    private string? _nearestAirport { get; set; }
     private IReadOnlyList<SkyPilot.Core.Web.PositionEntry> _lastPositions = [];
 
     /// <summary>Preview-only constructor: sets the DataContext to a pre-built ViewModel without connecting to any service.</summary>
