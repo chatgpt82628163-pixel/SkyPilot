@@ -15,6 +15,10 @@
     <Resource Include="Assets\mark.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Strings.resx"/>
+    <EmbeddedResource Include="Resources\Strings.ru.resx"/>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>

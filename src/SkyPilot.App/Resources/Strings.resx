@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="ConnectButton" xml:space="preserve">
+    <value>CONNECT</value>
+  </data>
+  <data name="DisconnectButton" xml:space="preserve">
+    <value>DISCONNECT</value>
+  </data>
+  <data name="ConnectingButton" xml:space="preserve">
+    <value>CONNECTING…</value>
+  </data>
+  <data name="FlightPlanFiled" xml:space="preserve">
+    <value>FPL filed</value>
+  </data>
+  <data name="FlightPlanNone" xml:space="preserve">
+    <value>No FPL</value>
+  </data>
+  <data name="AtcPanel" xml:space="preserve">
+    <value>ATC</value>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>SEND</value>
+  </data>
+  <data name="InputHint" xml:space="preserve">
+    <value>Type message or command</value>
+  </data>
+  <data name="HelpHint" xml:space="preserve">
+    <value>.help — commands</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="StatusConnecting" xml:space="preserve">
+    <value>Connecting…</value>
+  </data>
+  <data name="StatusConnected" xml:space="preserve">
+    <value>{0} (SkyNetwork)</value>
+  </data>
+  <data name="SimWaiting" xml:space="preserve">
+    <value>Sim: waiting</value>
+  </data>
+  <data name="SimConnected" xml:space="preserve">
+    <value>Sim: {0}</value>
+  </data>
+  <data name="PttNotAssigned" xml:space="preserve">
+    <value>PTT: not assigned</value>
+  </data>
+  <data name="RegisterLink" xml:space="preserve">
+    <value>No account? Register</value>
+  </data>
+  <data name="PttButton" xml:space="preserve">
+    <value>PTT</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ConnectWindowTitle" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="CallsignLabel" xml:space="preserve">
+    <value>Callsign</value>
+  </data>
+  <data name="AircraftTypeLabel" xml:space="preserve">
+    <value>Aircraft type</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="ConnectOkButton" xml:space="preserve">
+    <value>CONNECT</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>CANCEL</value>
+  </data>
+  <data name="CallsignError" xml:space="preserve">
+    <value>Callsign: 2–12 Latin letters and digits</value>
+  </data>
+  <data name="TypeError" xml:space="preserve">
+    <value>Enter the ICAO aircraft type code</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>SAVE</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>REFRESH</value>
+  </data>
+  <data name="SimbriefButton" xml:space="preserve">
+    <value>SIMBRIEF</value>
+  </data>
+  <data name="AtcToggle" xml:space="preserve">
+    <value>ATC</value>
+  </data>
+</root>

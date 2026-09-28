@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="ConnectButton" xml:space="preserve">
+    <value>ПОДКЛЮЧИТЬСЯ</value>
+  </data>
+  <data name="DisconnectButton" xml:space="preserve">
+    <value>ОТКЛЮЧИТЬСЯ</value>
+  </data>
+  <data name="ConnectingButton" xml:space="preserve">
+    <value>ПОДКЛЮЧЕНИЕ…</value>
+  </data>
+  <data name="FlightPlanFiled" xml:space="preserve">
+    <value>ФПЛ подан</value>
+  </data>
+  <data name="FlightPlanNone" xml:space="preserve">
+    <value>ФПЛ не подан</value>
+  </data>
+  <data name="AtcPanel" xml:space="preserve">
+    <value>ДИСПЕТЧЕРЫ</value>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>ОТПРАВИТЬ</value>
+  </data>
+  <data name="InputHint" xml:space="preserve">
+    <value>Написать / ввести команду</value>
+  </data>
+  <data name="HelpHint" xml:space="preserve">
+    <value>.help — команды</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Не подключено</value>
+  </data>
+  <data name="StatusConnecting" xml:space="preserve">
+    <value>Подключение…</value>
+  </data>
+  <data name="StatusConnected" xml:space="preserve">
+    <value>{0} (SkyNetwork)</value>
+  </data>
+  <data name="SimWaiting" xml:space="preserve">
+    <value>Симулятор: ожидание</value>
+  </data>
+  <data name="SimConnected" xml:space="preserve">
+    <value>Симулятор: {0}</value>
+  </data>
+  <data name="PttNotAssigned" xml:space="preserve">
+    <value>PTT: не назначен</value>
+  </data>
+  <data name="RegisterLink" xml:space="preserve">
+    <value>Нет аккаунта? Регистрация</value>
+  </data>
+  <data name="PttButton" xml:space="preserve">
+    <value>ГОВОРИТЬ</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="ConnectWindowTitle" xml:space="preserve">
+    <value>Подключение</value>
+  </data>
+  <data name="CallsignLabel" xml:space="preserve">
+    <value>Позывной / Callsign</value>
+  </data>
+  <data name="AircraftTypeLabel" xml:space="preserve">
+    <value>Тип ВС / Aircraft type</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Сервер / Server</value>
+  </data>
+  <data name="ConnectOkButton" xml:space="preserve">
+    <value>ПОДКЛЮЧИТЬСЯ</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>ОТМЕНА</value>
+  </data>
+  <data name="CallsignError" xml:space="preserve">
+    <value>Позывной: 2–12 латинских букв и цифр / Callsign: 2–12 Latin letters and digits</value>
+  </data>
+  <data name="TypeError" xml:space="preserve">
+    <value>Введите код ИКАО воздушного судна / Enter the ICAO aircraft type code</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>СОХРАНИТЬ</value>
+  </data>
+  <data name="RefreshButton" xml:space="preserve">
+    <value>ОБНОВИТЬ</value>
+  </data>
+  <data name="SimbriefButton" xml:space="preserve">
+    <value>SIMBRIEF</value>
+  </data>
+  <data name="AtcToggle" xml:space="preserve">
+    <value>ATC</value>
+  </data>
+</root>
