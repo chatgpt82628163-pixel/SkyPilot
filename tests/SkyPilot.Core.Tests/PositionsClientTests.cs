@@ -85,6 +85,13 @@ public class PositionsClientTests
     }
 
     [Fact]
+    public async Task ThrowsJsonExceptionOnMalformedBody()
+    {
+        var client = Make("not json", out _);
+        await Assert.ThrowsAsync<System.Text.Json.JsonException>(() => client.FetchAsync());
+    }
+
+    [Fact]
     public void MergeNetworkWinsFrequency()
     {
         var catalog = new List<PositionEntry>

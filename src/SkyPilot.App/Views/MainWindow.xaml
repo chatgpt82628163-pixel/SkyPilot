@@ -383,9 +383,9 @@
                     <!-- Callsign + name/next booking -->
                     <StackPanel Grid.Column="1">
                       <TextBlock Text="{Binding Callsign}" FontWeight="SemiBold" FontFamily="Consolas" FontSize="12"/>
-                      <!-- Online: controller name -->
+                      <!-- Online: controller name (hidden when name is absent) -->
                       <TextBlock FontSize="10" Foreground="{StaticResource Muted}" TextWrapping="NoWrap"
-                                 Visibility="{Binding IsOnline, Converter={StaticResource BoolToVis}}"
+                                 Visibility="{Binding ShowName, Converter={StaticResource BoolToVis}}"
                                  Text="{Binding Name}"/>
                       <!-- Booked: next booking time -->
                       <TextBlock FontSize="10" Foreground="{StaticResource Warn}" TextWrapping="NoWrap"

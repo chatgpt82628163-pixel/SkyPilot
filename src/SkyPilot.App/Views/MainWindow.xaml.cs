@@ -638,8 +638,10 @@ public partial class MainWindow : Window
             _lastPositions = await _positionsClient.FetchAsync(lat, lon);
             ApplyPositions();
             _vm.PositionsOffline = false;
+            if (lat.HasValue && lon.HasValue)
+                _nearestAirport = ResolveNearestAirport(lat.Value, lon.Value, _lastPositions);
         }
-        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or OperationCanceledException)
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or OperationCanceledException or System.Text.Json.JsonException or InvalidOperationException)
         {
             _vm.PositionsOffline = _lastPositions.Count == 0;
         }
@@ -650,6 +652,28 @@ public partial class MainWindow : Window
         var controllers = _session?.Controllers ?? [];
         var merged = PositionsClient.Merge(_lastPositions, controllers);
         _vm.UpdatePositions(merged);
+    }
+
+    private static string? ResolveNearestAirport(
+        double lat, double lon,
+        IReadOnlyList<SkyPilot.Core.Web.PositionEntry> positions)
+    {
+        string? best = null;
+        double bestDist = double.MaxValue;
+        foreach (var p in positions)
+        {
+            if (p.Location is not { Length: >= 2 }) continue;
+            double dlat = p.Location[0] - lat;
+            double dlon = p.Location[1] - lon;
+            double dist = dlat * dlat + dlon * dlon;
+            if (dist < bestDist)
+            {
+                bestDist = dist;
+                int us = p.Callsign.IndexOf('_');
+                best = us > 0 ? p.Callsign[..us] : p.Callsign;
+            }
+        }
+        return best;
     }
 
     private void OnPositionDoubleClick(object sender, MouseButtonEventArgs e)

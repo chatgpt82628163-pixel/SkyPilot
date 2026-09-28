@@ -33,8 +33,9 @@ public sealed record PositionRow(
         _                    => "#7A7A7A",
     };
 
-    public bool IsOnline  => State == PositionState.Online;
-    public bool IsBooked  => State == PositionState.Booked;
+    public bool IsOnline   => State == PositionState.Online;
+    public bool IsBooked   => State == PositionState.Booked;
+    public bool ShowName   => IsOnline && !string.IsNullOrEmpty(Name);
 }
 
 public sealed class MainViewModel : Observable
