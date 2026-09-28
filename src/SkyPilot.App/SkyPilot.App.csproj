@@ -14,10 +14,8 @@
   <ItemGroup>
     <Resource Include="Assets\mark.png" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Strings.resx"/>
-    <EmbeddedResource Include="Resources\Strings.ru.resx"/>
-  </ItemGroup>
+  <!-- Strings.resx and Strings.ru.resx are auto-included by the SDK as EmbeddedResource -->
+
   <ItemGroup>
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
   </ItemGroup>

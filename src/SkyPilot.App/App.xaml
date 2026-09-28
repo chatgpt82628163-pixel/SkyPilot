@@ -15,6 +15,8 @@
     <SolidColorBrush x:Key="OkHover" Color="#25B462"/>
     <SolidColorBrush x:Key="Bad" Color="#D0342C"/>
     <SolidColorBrush x:Key="BadHover" Color="#E0453D"/>
+    <SolidColorBrush x:Key="Warn" Color="#F0A020"/>
+    <SolidColorBrush x:Key="InputBg" Color="#13213A"/>
     <!-- The primary action wears the logo's blue gradient, as the website's buttons do. -->
     <LinearGradientBrush x:Key="AccentFill" StartPoint="0,0" EndPoint="0,1">
       <GradientStop Color="#1D72E6" Offset="0"/>

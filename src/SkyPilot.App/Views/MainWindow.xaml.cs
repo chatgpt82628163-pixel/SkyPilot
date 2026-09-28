@@ -115,8 +115,9 @@ public partial class MainWindow : Window
         _clock.Start();
         Loaded += (_, _) => CheckForUpdatesAtStart();
 
+        _vm.PttKey = _settings.PttKey.Length > 0 ? _settings.PttKey : "";
         _vm.RadioTab.Add(new ChatMessage(MessageKind.Info, "SkyPilot",
-            "Welcome to SkyPilot! Start your simulator (MSFS, Prepar3D or X-Plane), then click OFFLINE to connect. Commands: .help", DateTime.UtcNow));
+            "Welcome to SkyPilot! Start your simulator (MSFS, Prepar3D or X-Plane), then click CONNECT. Commands: .help", DateTime.UtcNow));
         Closing += (_, _) =>
         {
             _settings.KeepWindowOnTop = _vm.Topmost;
@@ -589,5 +590,38 @@ public partial class MainWindow : Window
         {
             if (list.Items.Count > 0) list.ScrollIntoView(list.Items[^1]);
         };
+    }
+
+    // ---- keyboard shortcuts ---------------------------------------------------------------
+
+    private void OnWindowKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F2)
+        {
+            OnConnectClick(sender, e);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.F5)
+        {
+            OnRefreshFlightPlanClick(sender, e);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.S && (Keyboard.Modifiers & ModifierKeys.Control) != 0)
+        {
+            OnSettingsClick(sender, e);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.D1 && (Keyboard.Modifiers & ModifierKeys.Alt) != 0)
+        {
+            Com1Box.Focus();
+            Com1Box.SelectAll();
+            e.Handled = true;
+        }
+        else if (e.Key == Key.D2 && (Keyboard.Modifiers & ModifierKeys.Alt) != 0)
+        {
+            Com2Box.Focus();
+            Com2Box.SelectAll();
+            e.Handled = true;
+        }
     }
 }

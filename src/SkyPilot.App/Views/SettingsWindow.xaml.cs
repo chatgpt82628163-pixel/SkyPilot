@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Navigation;
 using System.Windows.Threading;
 using SkyNetwork.Voice;
 using SkyPilot.Core.Settings;
@@ -63,6 +65,13 @@ public partial class SettingsWindow : Window
             _meter.Stop();
             _capture?.Cancel();
         };
+    }
+
+    private void OnRegisterLinkClick(object sender, RequestNavigateEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true }); }
+        catch { /* ignore */ }
+        e.Handled = true;
     }
 
     private void OnBrowseP3dClick(object sender, RoutedEventArgs e)

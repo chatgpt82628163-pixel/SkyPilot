@@ -18,7 +18,9 @@ public sealed class MainViewModel : Observable
     private bool _simConnected;
     private string? _simError;
     private bool _netConnected;
+    private bool _netConnecting;
     private string _callsign = "";
+    private string _pttKey = "";
     private int _com1Khz, _com2Khz;
     private string _com1 = "---.---";
     private string _com2 = "---.---";
@@ -68,22 +70,42 @@ public sealed class MainViewModel : Observable
     public string? SimError { get => _simError; set { if (Set(ref _simError, value)) OnStatusChanged(); } }
 
     public bool NetConnected { get => _netConnected; set { if (Set(ref _netConnected, value)) OnStatusChanged(); } }
+    public bool NetConnecting { get => _netConnecting; set { if (Set(ref _netConnecting, value)) OnStatusChanged(); } }
     public string Callsign { get => _callsign; set { if (Set(ref _callsign, value)) OnStatusChanged(); } }
 
     /// <summary>The connected simulator ("Prepar3D", "X-Plane 12"…).</summary>
     public string SimName { get => _simName; set { if (Set(ref _simName, value)) OnStatusChanged(); } }
 
+    /// <summary>Short display name of the assigned PTT key, or empty.</summary>
+    public string PttKey { get => _pttKey; set { if (Set(ref _pttKey, value)) OnStatusChanged(); } }
+
     public string SimStatus => SimConnected ? $"{SimName} connected"
         : SimError != null ? "Simulator not reachable"
         : "Waiting for the simulator…";
 
-    public string ConnectButtonText => NetConnected ? "ONLINE" : "OFFLINE";
+    public string ConnectButtonText => NetConnecting ? "CONNECTING…"
+        : NetConnected ? "DISCONNECT" : "CONNECT";
+
+    /// <summary>Status bar: network state.</summary>
+    public string NetStatusText => NetConnected ? $"● {Callsign} (SkyNetwork)"
+        : NetConnecting ? "● Connecting…"
+        : "● Disconnected";
+
+    /// <summary>Status bar: simulator state.</summary>
+    public string SimStatusText => SimConnected ? $"✈ {SimName}" : "✈ Sim: waiting";
+
+    /// <summary>Status bar: PTT state.</summary>
+    public string PttStatusText => PttKey.Length > 0 ? $"🎙 {PttKey}" : "🎙 PTT: not assigned";
+
     public string WindowTitle => NetConnected ? $"SkyPilot — {Callsign}" : "SkyPilot";
 
     private void OnStatusChanged()
     {
         RaisePropertyChanged(nameof(SimStatus));
         RaisePropertyChanged(nameof(ConnectButtonText));
+        RaisePropertyChanged(nameof(NetStatusText));
+        RaisePropertyChanged(nameof(SimStatusText));
+        RaisePropertyChanged(nameof(PttStatusText));
         RaisePropertyChanged(nameof(WindowTitle));
     }
 
