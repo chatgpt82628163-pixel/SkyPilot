@@ -76,7 +76,7 @@
       <CheckBox x:Name="RadioNoiseBox" Content="Шум радио / Radio noise" Margin="0,8,0,0"/>
       <Label Content="Кнопка PTT / Push-to-talk key"/>
       <DockPanel>
-        <Button x:Name="PttCaptureButton" DockPanel.Dock="Right" Content="НАЗНАЧИТЬ / ASSIGN" Width="140" Margin="8,0,0,0"
+        <Button x:Name="PttCaptureButton" DockPanel.Dock="Right" Content="НАЗНАЧИТЬ / ASSIGN" Width="165" Margin="8,0,0,0"
                 Click="OnPttCaptureClick" ToolTip="Click, then press a key or joystick button"/>
         <Button DockPanel.Dock="Right" Content="✕" Margin="8,0,0,0" Click="OnPttClearClick" ToolTip="Clear key"/>
         <TextBox x:Name="PttBox" IsReadOnly="True" Focusable="False"/>

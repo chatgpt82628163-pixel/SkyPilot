@@ -79,13 +79,13 @@ internal static class PreviewRenderer
     private static void RenderConnectWindow(string folder, AppSettings settings)
     {
         var win = new ConnectWindow(settings);
-        Save(win, 360, 320, System.IO.Path.Combine(folder, "connect-dialog-1x.png"), 1);
+        Save(win, 400, 320, System.IO.Path.Combine(folder, "connect-dialog.png"), 1);
     }
 
     private static void RenderSettingsWindow(string folder, AppSettings settings)
     {
         var win = new SettingsWindow(settings);
-        Save(win, 720, 600, System.IO.Path.Combine(folder, "settings-1x.png"), 1);
+        Save(win, 720, 660, System.IO.Path.Combine(folder, "settings.png"), 1);
     }
 
     // -----------------------------------------------------------------------
