@@ -57,12 +57,12 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = previewVm;
+        // Null-init backend services so no background threads are started during headless rendering.
         _settings = new AppSettings();
-        var hub = new SimulatorHub([]);
-        _sim = hub;
-        _msfsMatcher = new ModelMatcher();
-        _session = new NetworkSession(hub, _msfsMatcher);
-        _commands = new CommandProcessor(_session, hub);
+        _sim = null!;
+        _msfsMatcher = null!;
+        _session = null!;
+        _commands = null!;
     }
 
     public MainWindow()
