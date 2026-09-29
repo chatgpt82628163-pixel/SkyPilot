@@ -4,7 +4,6 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using SkyNetwork.Voice;
 using SkyPilot.Core.Settings;
-using SkyPilot.Core.Web;
 
 namespace SkyPilot.App.Views;
 
@@ -22,15 +21,13 @@ public partial class SettingsWindow : Window
     public SettingsWindow(AppSettings settings, ISecretProtector protector, Func<float> micLevel)
     {
         InitializeComponent();
+        SourceInitialized += (_, _) => Services.DarkTitleBar.Apply(this);
         _settings = settings;
         _protector = protector;
         _micLevel = micLevel;
         CidBox.Text = settings.Cid > 0 ? settings.Cid.ToString() : "";
         PasswordBox.Password = protector.Unprotect(settings.ProtectedPassword);
         NameBox.Text = settings.RealName;
-        var server = settings.CurrentServer;
-        ServerBox.Text = $"{server.Host}:{server.Port}";
-        WebsiteBox.Text = settings.Website;
         SimbriefBox.Text = settings.SimbriefUser;
         SimulatorBox.ItemsSource = SkyPilot.Core.Simulation.SimulatorKind.All.Select(k => new { k.Id, k.Title }).ToList();
         SimulatorBox.SelectedValue = settings.Simulator;
@@ -49,7 +46,6 @@ public partial class SettingsWindow : Window
         OnSliderChanged(this, new RoutedPropertyChangedEventArgs<double>(0, 0));
         _ptt = PttBinding.Parse(settings.PttKey);
         PttBox.Text = Describe(_ptt);
-        VoicePortBox.Text = settings.VoicePort.ToString();
 
         _meter.Tick += (_, _) => MicMeter.Value = _micLevel();
         _meter.Start();
@@ -109,7 +105,7 @@ public partial class SettingsWindow : Window
         }
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         _capture = cts;
-        PttCaptureButton.Content = "CANCEL";
+        PttCaptureButton.Content = "Cancel";
         PttBox.Text = "Press a key or joystick button…";
         try
         {
@@ -125,7 +121,7 @@ public partial class SettingsWindow : Window
         finally
         {
             _capture = null;
-            PttCaptureButton.Content = "ASSIGN";
+            PttCaptureButton.Content = "Assign";
             PttBox.Text = Describe(_ptt);
         }
     }
@@ -144,34 +140,10 @@ public partial class SettingsWindow : Window
             ErrorText.Text = "CID must be a positive number";
             return;
         }
-        var parts = ServerBox.Text.Trim().Split(':');
-        int port = 6809;
-        if (parts[0].Length == 0 || parts.Length > 2 || parts.Length == 2 && !int.TryParse(parts[1], out port))
-        {
-            ErrorText.Text = "Server address: host or host:port, e.g. 127.0.0.1:6809";
-            return;
-        }
-        string website = WebsiteBox.Text.Trim();
-        if (website.Length > 0 && !WebsiteClient.TryParseSite(website, out _))
-        {
-            ErrorText.Text = "Website address: e.g. skynetwork.example or http://127.0.0.1:8000";
-            return;
-        }
-        if (!int.TryParse(VoicePortBox.Text.Trim(), out var voicePort) || voicePort is <= 0 or > 65535)
-        {
-            ErrorText.Text = "Voice server port must be a number from 1 to 65535 (default 3782)";
-            return;
-        }
         _settings.Cid = cid;
-        _settings.Website = website;
         _settings.SimbriefUser = SimbriefBox.Text.Trim();
         _settings.ProtectedPassword = _protector.Protect(PasswordBox.Password);
         _settings.RealName = NameBox.Text.Trim();
-        var server = _settings.CurrentServer;
-        if (!_settings.Servers.Contains(server)) _settings.Servers.Add(server);
-        server.Host = parts[0];
-        server.Port = port;
-        _settings.SelectedServer = server.Name;
         _settings.Simulator = SimulatorBox.SelectedValue as string ?? SkyPilot.Core.Simulation.SimulatorKind.Auto;
         _settings.P3dSimConnectPath = P3dDllBox.Text.Trim();
         _settings.PlaySoundOnPrivateMessage = SoundBox.IsChecked == true;
@@ -183,7 +155,6 @@ public partial class SettingsWindow : Window
         _settings.OutputVolume = VolumeSlider.Value / 100;
         _settings.RadioNoise = RadioNoiseBox.IsChecked == true;
         _settings.PttKey = _ptt.ToString();
-        _settings.VoicePort = voicePort;
         DialogResult = true;
     }
 }

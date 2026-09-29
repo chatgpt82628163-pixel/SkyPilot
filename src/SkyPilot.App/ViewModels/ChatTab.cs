@@ -35,13 +35,13 @@ public sealed class ChatTab(string title, string? peer) : Observable
         if (Lines.Count > MaxLines) Lines.RemoveAt(0);
     }
 
-    private static readonly Brush Normal = Freeze(new SolidColorBrush(Color.FromRgb(0xE6, 0xE9, 0xED)));
-    private static readonly Brush Mine = Freeze(new SolidColorBrush(Color.FromRgb(0x8B, 0x95, 0xA1)));
-    private static readonly Brush Server = Freeze(new SolidColorBrush(Color.FromRgb(0x4C, 0xC3, 0x8A)));
-    private static readonly Brush Private = Freeze(new SolidColorBrush(Color.FromRgb(0x3F, 0xA9, 0xF5)));
-    private static readonly Brush Warning = Freeze(new SolidColorBrush(Color.FromRgb(0xF0, 0xB4, 0x29)));
-    private static readonly Brush Atis = Freeze(new SolidColorBrush(Color.FromRgb(0xB6, 0x9C, 0xF5)));
-    private static readonly Brush Error = Freeze(new SolidColorBrush(Color.FromRgb(0xE5, 0x53, 0x4B)));
+    private static readonly Brush Normal = Freeze(new SolidColorBrush(Color.FromRgb(0xE4, 0xE5, 0xE7)));
+    private static readonly Brush Mine = Freeze(new SolidColorBrush(Color.FromRgb(0x8E, 0x91, 0x97)));
+    private static readonly Brush Server = Freeze(new SolidColorBrush(Color.FromRgb(0xA9, 0xAD, 0xB3)));
+    private static readonly Brush Private = Freeze(new SolidColorBrush(Color.FromRgb(0x8F, 0xB8, 0xE3)));
+    private static readonly Brush Warning = Freeze(new SolidColorBrush(Color.FromRgb(0xD9, 0xA2, 0x3A)));
+    private static readonly Brush Atis = Freeze(new SolidColorBrush(Color.FromRgb(0xB7, 0xB1, 0xD6)));
+    private static readonly Brush Error = Freeze(new SolidColorBrush(Color.FromRgb(0xE0, 0x60, 0x5A)));
 
     private static Brush Freeze(SolidColorBrush b)
     {

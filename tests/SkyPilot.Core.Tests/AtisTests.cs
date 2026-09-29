@@ -184,6 +184,33 @@ public class AtisTests
         await WaitUntil(() => session.Controllers.Count > 0);
         var s = Assert.Single(session.Controllers);
         Assert.Equal(("ATIS", 128025), (s.FacilityText, s.FrequencyKhz));
+        Assert.Equal((55.97, 37.41), (s.Latitude, s.Longitude));
         await session.DisconnectAsync();
+    }
+
+    [Fact]
+    public async Task Controllers_ChangeWhenAStationMovesFrequency()
+    {
+        await using var server = new FakeFsdServer();
+        var (session, _, _, _) = Create();
+        int changes = 0;
+        session.ControllersChanged += (_, _) => Interlocked.Increment(ref changes);
+        await session.ConnectAsync(Info(server.Port));
+        await server.SendAsync("%UUEE_TWR:18100:4:50:5:55.97:37.41:0");
+        await WaitUntil(() => session.Controllers.Count > 0);
+        await server.SendAsync("%UUEE_TWR:18100:4:50:5:55.97:37.41:0");
+        await server.SendAsync("%UUEE_TWR:20300:4:50:5:55.97:37.41:0");
+        await WaitUntil(() => session.Controllers.Single().FrequencyKhz == 120300);
+        Assert.Equal(2, Volatile.Read(ref changes));
+        await session.DisconnectAsync();
+    }
+
+    [Fact]
+    public void Distance_IsInNauticalMiles()
+    {
+        // Sheremetyevo to Pulkovo: about 322 nm.
+        var uuee = new AtcStation("UUEE_TWR", 118100, 4, DateTime.UtcNow, 55.9726, 37.4146);
+        Assert.InRange(uuee.DistanceNm(59.8003, 30.2625)!.Value, 315, 330);
+        Assert.Null(new AtcStation("XXXX_CTR", 125550, 6, DateTime.UtcNow).DistanceNm(55, 37));
     }
 }

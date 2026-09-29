@@ -11,11 +11,10 @@ public partial class ConnectWindow : Window
     public ConnectWindow(AppSettings settings)
     {
         InitializeComponent();
+        SourceInitialized += (_, _) => Services.DarkTitleBar.Apply(this);
         _settings = settings;
         CallsignBox.Text = settings.LastCallsign;
         TypeBox.Text = settings.LastTypeCode;
-        ServerBox.ItemsSource = settings.Servers;
-        ServerBox.SelectedItem = settings.CurrentServer;
         Loaded += (_, _) => CallsignBox.Focus();
     }
 
@@ -35,7 +34,6 @@ public partial class ConnectWindow : Window
         }
         _settings.LastCallsign = callsign;
         _settings.LastTypeCode = type;
-        if (ServerBox.SelectedItem is ServerEntry server) _settings.SelectedServer = server.Name;
         DialogResult = true;
     }
 }

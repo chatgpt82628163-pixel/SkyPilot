@@ -20,7 +20,7 @@ public sealed record ReleaseInfo(Version Version, string Tag, Uri Page, Uri? Set
 /// </summary>
 public sealed class UpdateChecker(HttpClient http, string apiBase = UpdateChecker.DefaultApiBase, string setupPrefix = UpdateChecker.DefaultSetupPrefix)
 {
-    public const string DefaultApiBase = "https://sky.network.npzy2.us/api/v1/releases/skypilot";
+    public const string DefaultApiBase = SkyNetworkAddress.Website + "api/v1/releases/skypilot";
     public const string DefaultSetupPrefix = "SkyPilot-Setup-";
 
     /// <summary>
@@ -48,7 +48,7 @@ public sealed class UpdateChecker(HttpClient http, string apiBase = UpdateChecke
             if (release?.Tag == null || release.Draft || release.Prerelease || !TryParseTag(release.Tag, out var version)) return null;
             if (version <= Normalize(current)) return null;
             if (installedTag != null && string.Equals(installedTag.Trim(), release.Tag.Trim(), StringComparison.OrdinalIgnoreCase)) return null;
-            var page = Uri.TryCreate(release.Url, UriKind.Absolute, out var uri) ? uri : new Uri("https://sky.network.npzy2.us/docs/software");
+            var page = Uri.TryCreate(release.Url, UriKind.Absolute, out var uri) ? uri : new Uri(SkyNetworkAddress.Website + "docs/software");
             var setup = Asset(release, ".exe") ?? Asset(release, ".zip");
             var sha = Sha256Of(setup);
             // Never offer an installer that has no sha256 digest — it cannot be verified.

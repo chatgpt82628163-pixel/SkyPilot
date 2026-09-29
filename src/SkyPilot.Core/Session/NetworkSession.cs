@@ -251,9 +251,12 @@ public sealed partial class NetworkSession : IAsyncDisposable
             case "%":
                 if (Packets.ParseAtcPosition(p) is { } atc)
                 {
-                    bool isNew = !_atc.ContainsKey(atc.Callsign);
-                    _atc[atc.Callsign] = new AtcStation(atc.Callsign, atc.FrequencyKhz, atc.Facility, _clock());
-                    if (isNew) ControllersChanged?.Invoke(this, EventArgs.Empty);
+                    // The list changes when a station appears or moves to another frequency or facility.
+                    bool changed = !_atc.TryGetValue(atc.Callsign, out var old) ||
+                                   old.FrequencyKhz != atc.FrequencyKhz || old.Facility != atc.Facility;
+                    _atc[atc.Callsign] = new AtcStation(atc.Callsign, atc.FrequencyKhz, atc.Facility, _clock(),
+                        atc.Latitude, atc.Longitude);
+                    if (changed) ControllersChanged?.Invoke(this, EventArgs.Empty);
                 }
                 break;
             case "#DP":

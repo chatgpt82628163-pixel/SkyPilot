@@ -9,8 +9,24 @@ public sealed record ConnectInfo(
     string TypeCode,
     string RealName);
 
-public sealed record AtcStation(string Callsign, int FrequencyKhz, int Facility, DateTime LastSeen)
+/// <param name="Latitude">Where the controller sits (from the position packet); 0/0 when unknown.</param>
+public sealed record AtcStation(string Callsign, int FrequencyKhz, int Facility, DateTime LastSeen,
+    double Latitude = 0, double Longitude = 0)
 {
+    public bool HasPosition => Latitude != 0 || Longitude != 0;
+
+    /// <summary>Great-circle distance in nautical miles to a point, or null when the station's position is unknown.</summary>
+    public double? DistanceNm(double latitude, double longitude)
+    {
+        if (!HasPosition) return null;
+        const double EarthRadiusNm = 3440.065;
+        double rad = Math.PI / 180;
+        double dLat = (latitude - Latitude) * rad, dLon = (longitude - Longitude) * rad;
+        double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                   Math.Cos(Latitude * rad) * Math.Cos(latitude * rad) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        return 2 * EarthRadiusNm * Math.Asin(Math.Min(1, Math.Sqrt(a)));
+    }
+
     /// <summary>ATIS stations connect as separate clients named like "UUEE_ATIS".</summary>
     public bool IsAtis => IsAtisCallsign(Callsign);
 

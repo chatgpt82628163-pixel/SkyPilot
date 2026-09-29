@@ -28,7 +28,7 @@ public class UpdateCheckerTests
     }
 
     private static string Release(string tag, string assets = "") => $$"""
-        { "tag_name": "{{tag}}", "html_url": "https://sky.network.npzy2.us/docs/software", "assets": [ {{assets}} ] }
+        { "tag_name": "{{tag}}", "html_url": "https://sky-network.online/docs/software", "assets": [ {{assets}} ] }
         """;
 
     private static string Asset(string name, long size, string? sha = null) =>
@@ -55,7 +55,7 @@ public class UpdateCheckerTests
         Assert.Equal((new Version(0, 2, 0), "0.2.0"), (info!.Version, info.Tag));
         Assert.Equal("https://example.test/SkyPilot-Setup-0.2.0.exe", info.SetupUrl!.ToString());
         Assert.Equal((12345L, new string('a', 64), false), (info.SetupSize, info.SetupSha256, info.SetupIsZip));
-        Assert.Equal("https://sky.network.npzy2.us/api/v1/releases/skypilot/latest", server.LastApiRequest!.RequestUri!.ToString());
+        Assert.Equal("https://sky-network.online/api/v1/releases/skypilot/latest", server.LastApiRequest!.RequestUri!.ToString());
         Assert.Contains("SkyPilot", server.LastApiRequest.Headers.UserAgent.ToString());
     }
 
@@ -80,7 +80,7 @@ public class UpdateCheckerTests
         // A release without an installer is still reported, with its page, so the user can get it by hand.
         var bare = await new UpdateChecker(new HttpClient(new ReleaseServer(Release("0.9.0")))).CheckAsync(new Version(0, 1));
         Assert.Null(bare!.SetupUrl);
-        Assert.Equal("https://sky.network.npzy2.us/docs/software", bare.Page.ToString());
+        Assert.Equal("https://sky-network.online/docs/software", bare.Page.ToString());
     }
 
     [Fact]

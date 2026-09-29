@@ -92,11 +92,10 @@ public class VoiceTests
         {
             new AppSettings
             {
-                Cid = 1000001, VoicePort = 4000, InputDevice = "Mic", OutputDevice = "Phones", MicGain = 2, OutputVolume = 0.5,
+                Cid = 1000001, InputDevice = "Mic", OutputDevice = "Phones", MicGain = 2, OutputVolume = 0.5,
                 PttKey = new PttBinding(PttKind.Keyboard, 0xA3).ToString(),
             }.Save(path);
             var s = AppSettings.Load(path);
-            Assert.Equal(4000, s.VoicePort);
             Assert.Equal("Mic", s.InputDevice);
             Assert.Equal("Phones", s.OutputDevice);
             Assert.Equal(2, s.MicGain);
@@ -115,10 +114,9 @@ public class VoiceTests
         var path = Path.Combine(Path.GetTempPath(), $"skypilot-{Guid.NewGuid():N}.json");
         try
         {
-            File.WriteAllText(path, """{ "Cid": 1000001, "RealName": "Ivan Petrov", "KeepWindowOnTop": true }""");
+            File.WriteAllText(path, """{ "Cid": 1000001, "RealName": "Ivan Petrov", "KeepWindowOnTop": true, "VoicePort": 4000, "Website": "http://127.0.0.1:8000/", "Servers": [ { "Name": "SKYNET", "Host": "127.0.0.1", "Port": 6809 } ], "SelectedServer": "SKYNET" }""");
             var s = AppSettings.Load(path);
             Assert.Equal(1000001, s.Cid);
-            Assert.Equal(3782, s.VoicePort);
             Assert.Equal("", s.InputDevice);
             Assert.Equal("", s.OutputDevice);
             Assert.Equal(1, s.MicGain);

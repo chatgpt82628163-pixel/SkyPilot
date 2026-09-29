@@ -15,26 +15,18 @@ public sealed class PlainTextProtector : ISecretProtector
     public string Unprotect(string protectedValue) => protectedValue;
 }
 
-public sealed class ServerEntry
-{
-    public string Name { get; set; } = "SKYNET";
-    public string Host { get; set; } = "127.0.0.1";
-    public int Port { get; set; } = 6809;
-    public override string ToString() => $"{Name} ({Host}:{Port})";
-}
-
+/// <remarks>
+/// The server and website addresses are not settings: they are built in (<see cref="SkyNetworkAddress"/>). Older
+/// settings files still carry "Servers", "Website" and "VoicePort"; those fields are ignored when loading.
+/// </remarks>
 public sealed class AppSettings
 {
     public int Cid { get; set; }
     public string ProtectedPassword { get; set; } = "";
     public string RealName { get; set; } = "";
     public string HomeAirport { get; set; } = "";
-    /// <summary>SkyNetwork website, where flight plans are filed.</summary>
-    public string Website { get; set; } = "http://127.0.0.1:8000/";
     /// <summary>SimBrief username or numeric Pilot ID: SIMBRIEF loads the latest plan made there.</summary>
     public string SimbriefUser { get; set; } = "";
-    public List<ServerEntry> Servers { get; set; } = [new ServerEntry()];
-    public string SelectedServer { get; set; } = "SKYNET";
     public string LastCallsign { get; set; } = "";
     public string LastTypeCode { get; set; } = "";
     public bool PlaySoundOnPrivateMessage { get; set; } = true;
@@ -44,8 +36,6 @@ public sealed class AppSettings
     /// <summary>The release tag SkyPilot last installed by itself: that release is not offered again.</summary>
     public string UpdateInstalledTag { get; set; } = "";
 
-    /// <summary>UDP port of the voice server; it runs on the same host as the FSD server.</summary>
-    public int VoicePort { get; set; } = 3782;
     /// <summary>Microphone and speakers by device name; empty = Windows default.</summary>
     public string InputDevice { get; set; } = "";
     public string OutputDevice { get; set; } = "";
@@ -89,7 +79,4 @@ public sealed class AppSettings
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, JsonSerializer.Serialize(this, Options));
     }
-
-    public ServerEntry CurrentServer =>
-        Servers.FirstOrDefault(s => s.Name == SelectedServer) ?? Servers.FirstOrDefault() ?? new ServerEntry();
 }

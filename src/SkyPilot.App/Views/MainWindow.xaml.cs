@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using SkyPilot.App.Services;
 using SkyPilot.App.ViewModels;
+using SkyPilot.Core;
 using SkyPilot.Core.Fsd;
 using SkyPilot.Core.Matching;
 using SkyPilot.Core.Model;
@@ -55,6 +56,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        SourceInitialized += (_, _) => Services.DarkTitleBar.Apply(this);
         DataContext = _vm;
         _settings = AppSettings.Load(_settingsPath);
         _vm.Topmost = _settings.KeepWindowOnTop;
@@ -103,7 +105,7 @@ public partial class MainWindow : Window
         Loaded += (_, _) => CheckForUpdatesAtStart();
 
         _vm.RadioTab.Add(new ChatMessage(MessageKind.Info, "SkyPilot",
-            "Welcome to SkyPilot! Start your simulator (MSFS, Prepar3D or X-Plane), then click OFFLINE to connect. Commands: .help", DateTime.UtcNow));
+            "Welcome to SkyPilot! Start your simulator (MSFS, Prepar3D or X-Plane), then click Connect. Commands: .help", DateTime.UtcNow));
         Closing += (_, _) =>
         {
             _settings.KeepWindowOnTop = _vm.Topmost;
@@ -175,7 +177,7 @@ public partial class MainWindow : Window
         _sentPlan = null;
         // Voice follows the network connection; its failures are only reported, never disconnect FSD.
         if (connected && _connectInfo is { } info)
-            _voice.Start(new VoiceLogin(info.Host, _settings.VoicePort, info.Cid, _session.Callsign, info.Password));
+            _voice.Start(new VoiceLogin(info.Host, SkyNetworkAddress.VoicePort, info.Cid, _session.Callsign, info.Password));
         else
             _voice.Stop();
         if (connected) await RefreshFlightPlanAsync(quiet: true);
@@ -225,11 +227,12 @@ public partial class MainWindow : Window
         if (dialog.ShowDialog() != true) return;
         _settings.Save(_settingsPath);
 
-        var server = _settings.CurrentServer;
         ConnectButton.IsEnabled = false;
+        _vm.Connecting = true;
         try
         {
-            _connectInfo = new ConnectInfo(server.Host, server.Port, _settings.Cid,
+            // The network's address is built in: pilots only enter their CID, password and callsign.
+            _connectInfo = new ConnectInfo(SkyNetworkAddress.Host, SkyNetworkAddress.FsdPort, _settings.Cid,
                 _protector.Unprotect(_settings.ProtectedPassword), _settings.LastCallsign, _settings.LastTypeCode,
                 _settings.RealName);
             await _session.ConnectAsync(_connectInfo);
@@ -240,23 +243,18 @@ public partial class MainWindow : Window
         }
         finally
         {
+            _vm.Connecting = false;
             ConnectButton.IsEnabled = true;
         }
     }
 
     // ---- flight plan (filed on the website) ------------------------------------------------
 
-    private WebsiteClient? Website() =>
-        WebsiteClient.TryParseSite(_settings.Website, out var site) ? new WebsiteClient(Http, site) : null;
+    private static WebsiteClient Website() => new(Http, new Uri(SkyNetworkAddress.Website));
 
     private void OnFlightPlanClick(object sender, RoutedEventArgs e)
     {
         var site = Website();
-        if (site == null)
-        {
-            Error("Enter the SkyNetwork website address in Settings.");
-            return;
-        }
         var callsign = _session.IsConnected ? _session.Callsign : _settings.LastCallsign;
         Process.Start(new ProcessStartInfo(site.FlightPlanPage(callsign).ToString()) { UseShellExecute = true });
         Info("File your flight plan on the website, then click REFRESH.");
@@ -272,9 +270,9 @@ public partial class MainWindow : Window
     {
         _nextPlanPoll = DateTime.UtcNow + FlightPlanPollInterval;
         var site = Website();
-        if (site == null || _settings.Cid == 0)
+        if (_settings.Cid == 0)
         {
-            if (!quiet) Error("Enter your CID and the SkyNetwork website address in Settings.");
+            if (!quiet) Error("Enter your CID in Settings.");
             return;
         }
         FlightPlan? plan;
@@ -342,11 +340,11 @@ public partial class MainWindow : Window
         }
         // What the website has now: from here on only a different plan filed there replaces the SimBrief one.
         _websiteKnownAtSimbrief = false;
-        if (Website() is { } site && _settings.Cid != 0)
+        if (_settings.Cid != 0)
         {
             try
             {
-                _websitePlanAtSimbrief = await site.GetLatestFlightPlanAsync(_settings.Cid);
+                _websitePlanAtSimbrief = await Website().GetLatestFlightPlanAsync(_settings.Cid);
                 _websiteKnownAtSimbrief = true;
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
@@ -448,6 +446,14 @@ public partial class MainWindow : Window
     private void OnTuneCom2Click(object sender, RoutedEventArgs e)
     {
         if (ControllerList.SelectedItem is AtcRow row) TuneCom(2, row);
+    }
+
+    /// <summary>Opens (or creates) the private tab with the controller and puts the cursor in the message box.</summary>
+    private void OnPrivateMessageClick(object sender, RoutedEventArgs e)
+    {
+        if (ControllerList.SelectedItem is not AtcRow row) return;
+        _vm.SelectedTab = _vm.GetPrivateTab(row.Callsign);
+        Input.Focus();
     }
 
     private async Task RequestAtisAsync(AtcRow row)
