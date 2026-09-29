@@ -23,13 +23,8 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
 AppPublisher=SkyNetwork
-<<<<<<< HEAD
 AppPublisherURL=https://sky-network.online/docs/software
 AppSupportURL=https://sky-network.online/support
-=======
-AppPublisherURL=https://github.com/chatgpt82628163-pixel/SkyPilot
-AppSupportURL=https://github.com/chatgpt82628163-pixel/SkyPilot/issues
->>>>>>> ci/claude/readme
 VersionInfoVersion={#AppVersion}
 DefaultDirName={autopf}\SkyNetwork\{#AppName}
 DefaultGroupName=SkyNetwork
